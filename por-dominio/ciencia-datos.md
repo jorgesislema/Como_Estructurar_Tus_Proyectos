@@ -21,46 +21,47 @@ Además de los principios generales como Claridad, Consistencia y Separación de
 ## Estructura de Directorios Recomendada
 
 Una estructura bien definida es crucial. Aquí proponemos una plantilla común y adaptable:
-"""
-mi-proyecto-ds/
-├── .dvc/               # Metadatos de DVC (si se usa)
-├── .github/            # Workflows de CI/CD (ej. para tests, linting)
-│   └── workflows/
-├── .gitignore          # Archivos a ignorar por Git
-├── data/
-│   ├── raw/            # Datos originales, inmutables (ej. data.csv.dvc)
-│   ├── interim/        # Datos intermedios, transformados
-│   ├── processed/      # Datos listos para modelado
-│   └── external/       # Datos de fuentes externas
-├── docs/               # Documentación del proyecto (más allá del README)
-├── environments/       # Definiciones de entorno (alternativa a archivos raíz)
-│   └── environment.yml # Ejemplo para Conda
-├── models/             # Modelos entrenados serializados (ej. model.pkl.dvc)
-├── notebooks/
-│   ├── 0_setup/        # Configuración inicial, carga de datos
-│   ├── 1_exploration/  # Análisis exploratorio (EDA)
-│   ├── 2_preprocessing/ # Pasos de preprocesamiento (prototipado)
-│   ├── 3_modeling/     # Desarrollo y evaluación de modelos (prototipado)
-│   └── 4_reporting/    # Visualizaciones finales, informes
-├── reports/
-│   └── figures/        # Gráficos y visualizaciones generadas
-├── src/                # Código fuente modular y reutilizable
-│   ├── init.py
-│   ├── data/           # Scripts para descarga y procesamiento de datos
-│   ├── features/       # Scripts para ingeniería de características
-│   ├── modeling/       # Scripts para entrenamiento, evaluación, predicción
-│   └── visualization/  # Scripts para generar visualizaciones
-├── tests/              # Pruebas unitarias/integración para el código en src/
-│   └── ...
-├── config.yml          # Archivo de configuración (parámetros, rutas)
-├── dvc.yaml            # Pipeline de DVC (si se usa)
-├── environment.yml     # Definición de entorno Conda (o requirements.txt, Pipfile)
-├── LICENSE             # Licencia del proyecto
-├── Makefile            # (Opcional) Comandos comunes (ej. make process-data)
-├── README.md           # Descripción principal, instrucciones de setup y uso
-└── requirements.txt    # Alternativa/Complemento a environment.yml para pip
 
-"""
+```bash
+mi-proyecto-ds/
+├── .dvc/                   # Metadatos de DVC (si se usa)
+├── .github/                # Workflows de CI/CD (ej. para tests, linting)
+│   └── workflows/
+├── .gitignore              # Archivos a ignorar por Git
+├── data/                   # Datos en distintas etapas del flujo
+│   ├── raw/                # Datos originales, inmutables (ej. data.csv.dvc)
+│   ├── interim/            # Datos intermedios, transformados
+│   ├── processed/          # Datos listos para modelado
+│   └── external/           # Datos de fuentes externas
+├── docs/                   # Documentación del proyecto (más allá del README)
+├── environments/           # Definiciones de entorno (alternativa a archivos raíz)
+│   └── environment.yml     # Ejemplo para Conda
+├── models/                 # Modelos entrenados serializados (ej. model.pkl.dvc)
+├── notebooks/              # Jupyter notebooks organizados por etapas
+│   ├── 0_setup/            # Configuración inicial, carga de datos
+│   ├── 1_exploration/      # Análisis exploratorio (EDA)
+│   ├── 2_preprocessing/    # Pasos de preprocesamiento (prototipado)
+│   ├── 3_modeling/         # Desarrollo y evaluación de modelos (prototipado)
+│   └── 4_reporting/        # Visualizaciones finales, informes
+├── reports/                # Resultados y visualizaciones
+│   └── figures/            # Gráficos y visualizaciones generadas
+├── src/                    # Código fuente modular y reutilizable
+│   ├── __init__.py
+│   ├── data/               # Scripts para descarga y procesamiento de datos
+│   ├── features/           # Scripts para ingeniería de características
+│   ├── modeling/           # Scripts para entrenamiento, evaluación, predicción
+│   └── visualization/      # Scripts para generar visualizaciones
+├── tests/                  # Pruebas unitarias/integración para el código en src/
+│   └── ...
+├── config.yml              # Archivo de configuración (parámetros, rutas)
+├── dvc.yaml                # Pipeline de DVC (si se usa)
+├── environment.yml         # Definición de entorno Conda (o requirements.txt, Pipfile)
+├── LICENSE                 # Licencia del proyecto
+├── Makefile                # (Opcional) Comandos comunes (ej. make process-data)
+├── README.md               # Descripción principal, instrucciones de setup y uso
+└── requirements.txt        # Alternativa/Complemento a environment.yml para pip
+```
+
 
 **Explicación de Directorios Clave:**
 

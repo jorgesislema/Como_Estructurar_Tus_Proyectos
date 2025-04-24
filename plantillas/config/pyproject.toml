@@ -1,0 +1,347 @@
+# pyproject.toml template
+# -----------------------
+# Archivo de configuración estándar para proyectos Python modernos (PEP 518, PEP 621).
+# Define metadatos del proyecto, dependencias, sistema de build y configuración de herramientas.
+#
+# Cómo usar:
+# 1. Copia este contenido a un archivo llamado 'pyproject.toml' en la raíz de tu proyecto.
+# 2. Reemplaza los placeholders [ASÍ].
+# 3. Adapta las dependencias y configuraciones de herramientas a tu proyecto específico.
+#
+# Elige un backend de build (Hatchling, Setuptools, Poetry, Flit) y descomenta/ajusta
+# la sección [build-system] correspondiente. Hatchling es una opción moderna y flexible.
+
+# --- Sistema de Build (PEP 518) ---
+# Define cómo se construye tu paquete. Elige UNO de los backends.
+[build-system]
+# Opción 1: Hatchling (recomendado para nuevos proyectos)
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Opción 2: Setuptools (tradicional, pero asegúrate de usar versiones modernas)
+# requires = ["setuptools>=61.0"]
+# build-backend = "setuptools.build_meta"
+
+# Opción 3: Poetry (si usas Poetry para gestión de dependencias y build)
+# requires = ["poetry-core>=1.0.0"]
+# build-backend = "poetry.core.masonry.api"
+
+# Opción 4: Flit (simple para proyectos simples)
+# requires = ["flit_core>=3.2"]
+# build-backend = "flit_core.buildapi"
+
+
+# --- Metadatos del Proyecto (PEP 621) ---
+# Información estándar sobre tu proyecto.
+[project]
+name = "[nombre_del_paquete]" # Requerido: El nombre de distribución en PyPI
+# version = "0.1.0" # Requerido: Versión estática
+dynamic = ["version"] # Alternativa: Usa 'dynamic' si la versión se obtiene de otra fuente (ej: Git tag)
+description = "[Descripción corta y clara del proyecto]" # Opcional pero recomendado
+readme = "README.md" # Opcional: Archivo README (contenido usado en PyPI)
+requires-python = ">=3.8" # Requerido: Versiones de Python soportadas
+license = { text = "MIT" } # Opcional: Licencia (o { file = "LICENSE" })
+authors = [ # Opcional pero recomendado
+    { name = "[Tu Nombre o Equipo]", email = "[tu@email.com]" },
+]
+maintainers = [ # Opcional
+    # { name = "...", email = "..." },
+]
+keywords = ["[palabra_clave1]", "[palabra_clave2]", "python"] # Opcional: Ayuda a la descubribilidad en PyPI
+classifiers = [ # Opcional pero recomendado: Clasificadores estándar de PyPI
+    "Development Status :: 3 - Alpha", # O 4 - Beta, 5 - Production/Stable
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License", # ¡Asegúrate que coincida con tu licencia real!
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    # Añade otros clasificadores relevantes: https://pypi.org/classifiers/
+]
+
+# Dependencias Principales (Requeridas para instalar el paquete)
+dependencies = [
+    # "requests>=2.20", # Ejemplo: librería externa con versión mínima
+    # "pandas",         # Ejemplo: sin especificar versión (toma la última compatible)
+    # "pydantic~=2.0",  # Ejemplo: compatible con versión 2.x pero < 3.0
+]
+
+# URLs del Proyecto (Opcional pero recomendado)
+[project.urls]
+Homepage = "[URL_REPOSITORIO_O_WEB]"
+Documentation = "[URL_DOCUMENTACION]"
+Repository = "[URL_REPOSITORIO]"
+"Bug Tracker" = "[URL_REPOSITORIO]/issues"
+Changelog = "[URL_REPOSITORIO]/blob/main/CHANGELOG.md"
+
+# Puntos de Entrada para Scripts CLI (Opcional)
+[project.scripts]
+# nombre-comando = "nombre_paquete.modulo:funcion_main"
+# mi-cli = "mi_paquete.cli:app" # Ejemplo con Typer/Click
+
+# Puntos de Entrada para Scripts GUI (Opcional)
+# [project.gui-scripts]
+# mi-gui-app = "mi_paquete.gui:start"
+
+# Puntos de Entrada para Plugins (Opcional - PEP 660)
+# [project.entry-points."grupo.plugin"]
+# nombre_plugin = "mi_paquete.plugins:ClasePlugin"
+
+# Dependencias Opcionales (Extras - PEP 658)
+[project.optional-dependencies]
+test = [ # Dependencias para ejecutar tests
+    "pytest>=7.0",
+    "pytest-cov",
+    # "httpx", # Ejemplo para tests de API
+]
+dev = [ # Dependencias para desarrollo (incluye test, lint, format, etc.)
+    # "nombre_paquete[test]", # Incluye las dependencias de test
+    # "ruff",
+    # "mypy",
+    # "pre-commit",
+    # "ipython",
+]
+docs = [ # Dependencias para construir la documentación
+    "sphinx",
+    "furo", # Ejemplo de tema Sphinx
+    "myst-parser", # Para usar Markdown en Sphinx
+]
+# Puedes añadir otros grupos, ej: 'api', 'plotting'
+# api = ["fastapi", "uvicorn[standard]"]
+
+
+# --- Configuración de Herramientas ---
+# Aquí es donde configuras tus linters, formateadores, testers, etc.
+
+# --- Configuración Específica de Hatch (Ejemplo si usas Hatchling) ---
+[tool.hatch.version]
+# Ejemplo: Obtener versión dinámicamente desde tags Git usando hatch-vcs
+# Necesita: pip install hatch-vcs
+path = "src/[nombre_del_paquete]/__init__.py" # Archivo donde se escribe la versión
+# source = "vcs" # Comenta esto si usas versión estática en [project]
+
+[tool.hatch.envs.default]
+# Configuración del entorno virtual por defecto de Hatch
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=src/[nombre_del_paquete] --cov=tests {args:tests}"
+cov-report = "coverage html {args}"
+# Define más scripts: lint, format, etc.
+
+[tool.hatch.envs.lint]
+detached = true # No instala el paquete actual en este entorno
+dependencies = [
+  "ruff",
+  "mypy",
+]
+[tool.hatch.envs.lint.scripts]
+style = "ruff check . {args}"
+format = "ruff format . {args}"
+typing = "mypy --install-types --non-interactive {args:src/[nombre_del_paquete] tests}"
+all = [
+  "style",
+  "format",
+  "typing",
+]
+
+
+# --- Configuración de Ruff (Linter y Formateador Rápido) ---
+# https://docs.astral.sh/ruff/configuration/
+[tool.ruff]
+# Versión mínima de Python a soportar (ayuda a reglas específicas)
+target-version = "py38" # ej: "py38", "py39", etc.
+
+# Directorios a incluir/excluir
+include = ["src/**/*.py", "tests/**/*.py", "*.py"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "venv",
+    "env",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "node_modules",
+]
+
+line-length = 88 # Compatible con Black por defecto
+
+# Configuración del Linter
+[tool.ruff.lint]
+# Habilita conjuntos de reglas. 'E' y 'F' son errores/flakes de pycodestyle/pyflakes (esenciales).
+# 'I' es isort (ordenar imports). 'UP' son mejoras de pyupgrade.
+# Explora más reglas: https://docs.astral.sh/ruff/rules/
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"] # Ignorar línea demasiado larga (manejado por el formateador)
+# Puedes ignorar reglas específicas por archivo si es necesario:
+# [tool.ruff.lint.per-file-ignores]
+# "tests/*" = ["S101"] # Ignorar asserts en tests
+
+# Configuración del Formateador (Alternativa a Black/Blue)
+[tool.ruff.format]
+# Opciones comunes:
+quote-style = "double" # O "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+
+# --- Configuración de Mypy (Type Checker) ---
+# https://mypy.readthedocs.io/en/stable/config_file.html
+[tool.mypy]
+python_version = "3.8" # Versión mínima de Python
+warn_return_any = true
+warn_unused_configs = true
+# Opciones de Strict Mode (puedes habilitarlas gradualmente):
+# strict = true
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+# Ignora librerías de terceros que no tienen stubs (o instala stubs: pip install types-requests)
+ignore_missing_imports = true
+
+# Excluye directorios específicos si es necesario
+exclude = ['venv', '.venv', 'build', 'dist']
+
+# Puedes definir opciones por módulo si es necesario
+# [[tool.mypy.overrides]]
+# module = "third_party_lib.*"
+# ignore_missing_imports = true
+
+
+# --- Configuración de Pytest ---
+# https://docs.pytest.org/en/stable/reference/customize.html#pyproject-toml
+[tool.pytest.ini_options]
+minversion = "7.0"
+# Opciones comunes para la línea de comandos
+addopts = "-ra -q --strict-markers" # -ra: report all except pass, -q: quiet, --strict-markers: fail on unknown markers
+testpaths = [ # Directorios donde buscar tests
+    "tests",
+    # Puedes añadir más si tienes tests en otros lugares
+]
+python_files = "test_*.py" # Patrón para archivos de test
+python_classes = "Test*"  # Patrón para clases de test
+python_functions = "test_*" # Patrón para funciones de test
+# filterwarnings = [ # Suprime warnings específicos durante los tests si es necesario
+#     "ignore::DeprecationWarning",
+# ]
+
+
+# --- Configuración de Coverage.py (Test Coverage) ---
+# https://coverage.readthedocs.io/en/7.x/config.html#config-file-pyproject-toml
+[tool.coverage.run]
+branch = true # Mide cobertura de ramas
+source = ["src/[nombre_del_paquete]"] # Mide cobertura solo en tu código fuente
+omit = [ # Archivos a excluir de la medición
+    "src/[nombre_del_paquete]/__main__.py",
+    "*/__init__.py",
+    "tests/*",
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+# Fail si la cobertura total es menor a X%
+# fail_under = 85
+show_missing = true  # Muestra las líneas no cubiertas
+skip_covered = true  # Omite archivos con 100% cobertura en el reporte de texto
+exclude_lines = [ # Excluye líneas específicas del reporte
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "pass",
+    # Líneas que solo contienen '...', '"""', etc.
+    "^\\s*\\.\\.\\.$",
+    "^\\s*\\\"\"\"$",
+    "^\\s*\\\'\'\'$",
+]
+
+
+# --- (Opcional) Configuración de Black / Blue (Formateadores si no usas Ruff) ---
+# [tool.black]
+# line-length = 88
+# target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+# include = '\.pyi?$'
+# exclude = '''
+# /(
+#     \.eggs
+#   | \.git
+#   | \.hg
+#   | \.mypy_cache
+#   | \.tox
+#   | \.venv
+#   | _build
+#   | buck-out
+#   | build
+#   | dist
+# )/
+# '''
+
+# --- (Opcional) Configuración de isort (Ordenar Imports si no usas Ruff) ---
+# [tool.isort]
+# profile = "black"
+# line_length = 88
+
+
+# --- Fin de la Configuración de Herramientas ---
+
+
+# --- (Opcional) Configuración Específica de Poetry (Si usas Poetry como backend/gestor) ---
+# La mayoría de los metadatos se toman de [project], pero Poetry tiene su propia sección [tool.poetry]
+# para dependencias, scripts, etc. Consulta la documentación de Poetry.
+# [tool.poetry]
+# name = "[nombre_del_paquete]" # Debe coincidir con [project].name
+# version = "0.1.0" # Debe coincidir con [project].version si es estática
+# description = "[Descripción...]" # Debe coincidir con [project].description
+# authors = ["[Tu Nombre <tu@email.com>]"] # Formato ligeramente diferente
+# license = "MIT" # Debe coincidir
+# readme = "README.md"
+# repository = "[URL_REPO]"
+# documentation = "[URL_DOCS]"
+# keywords = ["[palabra_clave1]"]
+# classifiers = [...] # Los mismos que en [project]
+
+# [tool.poetry.dependencies]
+# python = "^3.8" # Rango de versión de Python
+# # requests = "^2.20" # Ejemplo de dependencia
+
+# [tool.poetry.group.dev.dependencies] # Equivalente a optional-dependencies[dev]
+# pytest = "^7.0"
+# ruff = "^0.x"
+
+# [tool.poetry.scripts]
+# mi-cli = "mi_paquete.cli:app"
+
+
+### Puntos Clave a Recordar:
+
+    Un Archivo para Gobernarlos: La meta es centralizar tanta configuración como sea posible en pyproject.toml.
+    Elige un Backend: Decide qué sistema de build usarás (hatchling, setuptools, poetry-core, flit_core) y configura la sección [build-system] correctamente.
+    PEP 621 para Metadatos: Usa la sección [project] para toda la información estándar del paquete.
+    Configuración de Herramientas: Usa las secciones [tool.*] para configurar tus herramientas de desarrollo preferidas. ¡Consulta la documentación de cada herramienta para ver todas las opciones disponibles!
+    Dependencias: Define claramente las dependencias principales (dependencies) y las opcionales/de desarrollo (optional-dependencies).
+    Personaliza: Esta es una plantilla completa. Elimina las secciones de herramientas que no uses y ajusta las configuraciones a las necesidades de tu proyecto.
+
+Este archivo es la base de un proyecto Python bien estructurado y fácil de mantener. ¡Adáptalo y disfruta de la configuración moderna!

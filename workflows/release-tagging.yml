@@ -1,0 +1,123 @@
+# plantillas/workflows/release-tagging.yml
+# -----------------------------------------
+# Plantilla de Workflow de GitHub Actions para Crear Tags y Releases
+#
+# Propósito: Automatizar la creación de tags Git y Releases de GitHub
+#            basado en una acción manual o (opcionalmente) al pushear un tag.
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/release-tagging.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Configura los inputs del workflow_dispatch si necesitas más opciones.
+#    - (IMPORTANTE) Ajusta o implementa la lógica para determinar la NUEVA versión (Paso 'Determinar Nueva Versión').
+#      - Puedes usar herramientas como 'npm version', 'poetry version', o acciones/scripts personalizados.
+#    - (Opcional) Configura la generación automática de Changelog (Paso 'Generar Changelog').
+#      - Requiere seguir Conventional Commits y usar herramientas como 'conventional-changelog-cli'.
+#    - (Opcional) Ajusta la sección 'files:' en el paso 'Crear GitHub Release' si tienes artefactos de build para adjuntar.
+#    - Asegúrate de que el workflow tenga los permisos correctos ('contents: write').
+#
+# Alternativa de Trigger (Comentada): Puedes cambiar el trigger 'on:' para que se active
+# automáticamente cuando empujes un tag Git (ej: 'v1.2.3'), pero el trigger manual
+# ('workflow_dispatch') da más control sobre el proceso.
+
+name: 🚀 Create Release Tag & GitHub Release
+
+# --- Disparadores del Workflow ---
+on:
+  # -- Opción 1: Trigger Manual (Recomendado para control) --
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Tipo de incremento de versión (patch, minor, major) o "custom"'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: 'patch'
+      custom_version:
+        description: 'Versión exacta a usar (ej: 1.2.3, solo si version_bump es "custom")'
+        required: false
+        type: string
+      prerelease:
+        description: '¿Marcar esta release como pre-release?'
+        required: true
+        type: boolean
+        default: false
+      target_branch:
+        description: 'Rama desde la cual crear el tag/release'
+        required: true
+        type: string
+        default: 'main' # [ADAPTAR] O 'develop', etc.
+
+  # -- Opción 2: Trigger al Empujar un Tag (Comentado) --
+  # push:
+  #   tags:
+  #     - 'v*.*.*' # Se activa cuando empujas un tag como v1.0.0, v2.3.4, etc.
+
+# --- Permisos ---
+# Necesita permisos para escribir contenido (crear tags, crear releases)
+permissions:
+  contents: write
+  # pull-requests: read # Puede ser necesario para generar changelogs detallados
+
+# --- Trabajos (Jobs) ---
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout del código
+      # fetch-depth: 0 clona todo el historial, necesario para calcular la versión
+      # o generar changelogs basados en commits anteriores.
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.target_branch || github.ref }} # Usa la rama del input o la rama/tag que disparó el evento
+          fetch-depth: 0 # Necesario para historial completo
+          # token: <span class="math-inline">\{\{ secrets\.PAT\_TOKEN \}\} \# \[ADAPTAR\] Descomenta si necesitas un PAT para acciones que requieran más permisos
+\# 2\. \(Opcional\) Configurar Node\.js \(si usas herramientas JS para versionado/changelog\)
+\- name\: Configurar Node\.js ⚡ \(si es necesario\)
+\# \[ADAPTAR\] Descomenta y ajusta si usas conventional\-changelog\-cli, semantic\-release, etc\.
+\# uses\: actions/setup\-node@v4
+\# with\:
+\#   node\-version\: '20\.x'
+\#   cache\: 'npm' \# O 'yarn', 'pnpm'
+\# 3\. Instalar herramientas \(si es necesario\)
+\# \- name\: Instalar herramientas de release 🛠️ \(si es necesario\)
+\#   run\: npm install \-g conventional\-changelog\-cli \# \[ADAPTAR\] Ejemplo
+\# 4\. Determinar Nueva Versión
+\# Este paso es crucial y depende de tu estrategia\.
+\# Opción A\: Usar input 'custom\_version'\.
+\# Opción B\: Calcular siguiente versión basada en el último tag y 'version\_bump'\.
+\# Aquí un ejemplo conceptual \(¡NECESITAS IMPLEMENTAR ESTA LÓGICA\!\)\:
+\- name\: Determinar Nueva Versión 🔢
+id\: versioning
+run\: \|
+\# Lógica para obtener la nueva versión
+LATEST\_TAG\=</span>(git describe --tags --abbrev=0 2>/dev/null ||
+
+
+Explicación y Puntos Clave:
+
+    Trigger Manual (workflow_dispatch): Es la forma más segura de empezar. Vas a la pestaña "Actions" de tu repo, seleccionas este workflow y le das a "Run workflow", eligiendo el tipo de bump, si es pre-release y la rama objetivo.
+    Permisos: El workflow necesita permiso contents: write para poder crear tags y releases.
+    Workspace-depth: 0: Necesario en actions/checkout para que Git tenga todo el historial y se pueda calcular la versión anterior o generar el changelog correctamente.
+    Determinar Versión: Este es el paso más crítico y dependiente del proyecto. La plantilla incluye una lógica muy básica en Bash.
+   Recomendación: Usa herramientas específicas para tu ecosistema (npm version patch/minor/major, poetry version patch/minor/major, 
+                  bump2version, semantic-release si usas Conventional Commits) o una GitHub Action dedicada para manejar SemVer 
+                  correctamente. El resultado (NEW_VERSION, NEW_VERSION_NUM) se guarda en variables de entorno ($GITHUB_ENV) 
+                  para pasos posteriores.
+    Generar Changelog: Altamente recomendado si sigues Conventional Commits. Hay muchas herramientas y Actions para esto.
+                       La plantilla deja un placeholder.
+    Actualizar Versión en Archivos (Opcional): Si necesitas que la versión quede escrita en package.json, pyproject.toml, etc., añade un paso para hacerlo y commitearlo antes de crear el tag.
+    Crear Tag: Usa comandos git tag y git push para crear y publicar el tag anotado.
+    Crear GitHub Release: Usa actions/create-release (o alternativas) para crear la entrada en la sección "Releases" de GitHub, asociándola al tag y añadiendo las notas del changelog.
+        prerelease: ${{ github.event.inputs.prerelease }}: Usa el valor del input manual para marcarla como pre-release o no.
+        files:: Si tienes artefactos de build (ej: binarios, paquetes) generados en un job anterior (o en este mismo workflow), puedes listarlos aquí para adjuntarlos a la release.
+
+Recuerda probar este workflow cuidadosamente en una rama o tag de prueba antes de usarlo en producción, ya que interactúa directamente con tu historial de Git y las releases públicas. ¡Adapta la lógica de versionado y changelog a tus necesidades!

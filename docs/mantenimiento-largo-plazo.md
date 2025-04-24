@@ -116,4 +116,3 @@ Construir software mantenible no es un acto de altruismo hacia los futuros desar
 Aplicando los principios de legibilidad, modularidad, testeabilidad, buena documentación, gestión de dependencias, automatización y refactorización continua, podemos crear sistemas que no solo funcionen hoy, sino que puedan adaptarse y prosperar durante años. ¡Construyamos para el futuro!
 
 ---
-*(Mantener el software saludable es como cuidar un jardín; requiere atención constante, pero los frutos merecen la pena. ¿Qué otro aspecto del ciclo de vida del software exploramos?)*

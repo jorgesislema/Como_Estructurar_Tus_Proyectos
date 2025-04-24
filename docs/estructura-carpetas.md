@@ -120,3 +120,7 @@ Para proyectos pequeños o en etapas iniciales, no caigas en la trampa de crear 
 ## El Poder de los `README` Locales
 
 No subestimes el valor de añadir un archivo `README.md` simple dentro de directorios cuyo propósito o contenido no sea inmediatamente obvio. Una breve descripción puede ahorrar mucho tiempo y confusión.
+
+## Conclusión
+
+Diseñar una estructura de carpetas efectiva es un ejercicio de equilibrio entre seguir principios sólidos (Claridad, Consistencia, SoC) y adaptarse al contexto específico del proyecto. Dedica tiempo a pensar en tu estructura al inicio, pero no temas refactorizarla a medida que el proyecto evoluciona. Una buena estructura es una inversión que paga dividendos en productividad, mantenibilidad y colaboración a lo largo de toda la vida del proyecto.

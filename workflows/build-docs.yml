@@ -1,0 +1,179 @@
+# plantillas/workflows/build-docs.yml
+# ------------------------------------
+# Plantilla de Workflow de GitHub Actions para Construir y Desplegar Documentación
+#
+# Propósito: Construir el sitio de documentación estático y desplegarlo en GitHub Pages.
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/build-docs.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Ramas en el trigger 'on:'.
+#    - Elige la configuración de entorno: Python ('setup-python') o Node.js ('setup-node')
+#      según tu generador de documentación (MkDocs/Sphinx vs Docusaurus/VitePress).
+#    - Comando de instalación de dependencias (pip, poetry, npm, yarn, pnpm).
+#    - Comando de build de la documentación ('mkdocs build', 'sphinx-build', 'npm run docs:build').
+#    - Directorio de salida del build ('site/', '_build/html/', 'dist/', '.vitepress/dist').
+#    - (Opcional) Configura el paso de link checking.
+#    - Configura los permisos y el entorno de despliegue para GitHub Pages en tu repo.
+#
+# Despliegue a GitHub Pages:
+# - Este workflow usa el método moderno y recomendado con 'actions/upload-pages-artifact' y 'actions/deploy-pages'.
+# - Necesitas habilitar GitHub Pages en la configuración de tu repositorio (Settings -> Pages)
+#   y seleccionar "GitHub Actions" como fuente de despliegue.
+# - El workflow necesita permisos 'pages: write' y 'id-token: write'.
+
+name: 📄 Build and Deploy Documentation
+
+# --- Disparadores del Workflow ---
+on:
+  push:
+    branches:
+      - main # [ADAPTAR] Despliega cuando se hace push a la rama principal
+    # (Opcional) Solo ejecutar si cambian archivos de docs o este workflow
+    # paths:
+    #   - 'docs/**' # [ADAPTAR] Ruta a tus archivos fuente de docs
+    #   - '.github/workflows/build-docs.yml'
+    #   - 'mkdocs.yml' # [ADAPTAR] Archivo de config de tu generador
+    #   - 'pyproject.toml' # O requirements-docs.txt, package.json, etc.
+  pull_request:
+    branches: [ "main", "develop" ] # [ADAPTAR] Ejecuta el build en PRs para verificar errores
+    # (Opcional) Solo ejecutar si cambian archivos de docs
+    # paths:
+    #   - 'docs/**'
+    #   - '.github/workflows/build-docs.yml'
+    #   - 'mkdocs.yml'
+    #   - 'pyproject.toml'
+  # Permite ejecución manual
+  workflow_dispatch:
+
+# --- Permisos ---
+# Necesarios para desplegar en GitHub Pages con el método moderno
+permissions:
+  contents: read # Necesario para checkout
+  pages: write # Necesario para desplegar en Pages
+  id-token: write # Necesario para autenticarse con OIDC para Pages
+
+# --- Concurrencia ---
+# Asegura que solo se despliegue una instancia a la vez para Pages, cancelando ejecuciones antiguas.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# --- Trabajos (Jobs) ---
+jobs:
+  # --- Job de Build ---
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout del código
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Configurar Entorno (¡ELIGE UNO: Python o Node.js!)
+      # --- Opción A: Entorno Python (para MkDocs, Sphinx) ---
+      - name: Configurar Python 🐍
+        # [ADAPTAR] Descomenta esta sección si usas MkDocs, Sphinx, etc.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # [ADAPTAR] Versión de Python requerida
+          cache: 'pip' # O 'poetry', 'pipenv' según tu gestor
+          # cache-dependency-path: '**/pyproject.toml' # O requirements*.txt
+
+      # --- Opción B: Entorno Node.js (para Docusaurus, VitePress, etc.) ---
+      # - name: Configurar Node.js ⚡
+      #   # [ADAPTAR] Descomenta esta sección si usas un generador basado en Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20.x' # [ADAPTAR] Versión de Node.js requerida
+      #     cache: 'npm' # O 'yarn', 'pnpm'
+      #     # cache-dependency-path: '**/package-lock.json' # O yarn.lock, pnpm-lock.yaml
+
+      # 3. Instalar Dependencias
+      - name: Instalar dependencias 📦
+        run: |
+          # [ADAPTAR] Elige el comando según tu setup (Python o Node.js)
+          # --- Para Python ---
+          python -m pip install --upgrade pip
+          # pip install -r requirements-docs.txt # Si tienes un archivo dedicado
+          pip install mkdocs mkdocs-material [...] # O instala directamente
+          # poetry install --with docs
+          # hatch env create docs && hatch run -e docs pip install ...
+          # --- Para Node.js ---
+          # npm ci
+          # yarn install --frozen-lockfile
+          # pnpm install --frozen-lockfile
+        shell: bash
+
+      # 4. Construir la Documentación
+      # Falla el build si hay warnings (--strict en MkDocs, -W en Sphinx)
+      - name: Construir documentación 🏗️
+        run: |
+          # [ADAPTAR] Elige el comando de build para tu generador
+          # --- Para MkDocs ---
+          mkdocs build --verbose --strict --site-dir _site # Guarda en _site/ para Pages
+          # --- Para Sphinx ---
+          # sphinx-build -b html docs/source _site -W --keep-going # Guarda en _site/
+          # --- Para Node.js (ejemplo genérico) ---
+          # npm run docs:build # Asume script en package.json que construye a '_site/'
+        shell: bash
+
+      # 5. (Opcional) Verificar Enlaces Rotos
+      # Es buena idea chequear enlaces después del build
+      # - name: Verificar enlaces rotos 🔗
+      #   run: |
+      #     # [ADAPTAR] Instala y usa una herramienta como lychee-checker
+      #     # Ejemplo: Necesita instalar lychee primero
+      #     # lychee ./_site # [ADAPTAR] Ruta al sitio construido
+      #   shell: bash
+
+      # 6. Subir Artefacto para GitHub Pages
+      # Sube el contenido del directorio de build para que el job 'deploy' pueda usarlo.
+      - name: Subir artefacto de Pages ⬆️
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # [ADAPTAR] Ruta al directorio donde tu generador construyó el sitio HTML final
+          path: './_site' # MkDocs y Sphinx suelen usar 'site/' o '_build/html/'. Lo hemos forzado a '_site' arriba. Node.js puede usar 'dist/', 'build/', '.vitepress/dist', etc.
+
+  # --- Job de Despliegue ---
+  deploy:
+    name: Deploy to GitHub Pages
+    # Solo se ejecuta si el job 'build' terminó exitosamente
+    needs: build
+    # Condición de ejecución: SOLO en push a 'main' O si se disparó manualmente
+    # [ADAPTAR] Ajusta la condición si quieres desplegar en otras situaciones (ej: tags)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    # Configuración del entorno de despliegue de GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # URL del sitio desplegado
+
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Desplegar a GitHub Pages
+      # Esta acción toma automáticamente el artefacto subido por 'upload-pages-artifact'
+      # y lo despliega usando el GITHUB_TOKEN.
+      - name: Desplegar a GitHub Pages 🚀
+        id: deployment
+        uses: actions/deploy-pages@v4
+        # No necesita 'with:' si solo hay un artefacto subido por 'upload-pages-artifact'
+
+
+Pasos Clave para Implementar:
+
+    Elige tu Entorno: Decide si tu generador de documentación usa Python (MkDocs, Sphinx) o Node.js (Docusaurus, VitePress, etc.) y descomenta/configura la sección correcta de setup-python o setup-node. Elimina la otra.
+    Instalación: Adapta el paso "Instalar dependencias" para usar tu gestor de paquetes (pip, poetry, hatch, npm, yarn, pnpm) y el archivo correcto (requirements-docs.txt, pyproject.toml, package.json). ¡Asegúrate de instalar el generador y todos sus plugins/temas!
+    Comando de Build: Cambia el comando en el paso "Construir documentación" por el comando específico de tu herramienta.
+   Importante: Asegúrate de que la salida del build se genere en el directorio especificado en el paso "Subir artefacto de Pages" 
+               (la plantilla usa ./_site como ejemplo estándar para GitHub Pages Actions, puedes forzar a tu herramienta a usar ese directorio,
+               ej: mkdocs build --site-dir _site).
+    Rutas de paths: (Opcional): Si quieres que el workflow se ejecute solo cuando cambien archivos relevantes, descomenta y adapta las líneas paths: en la sección on:.
+    Permisos y Configuración de Pages:
+        Ve a la configuración de tu repositorio en GitHub (Settings -> Pages).
+        En "Build and deployment", selecciona "GitHub Actions" como la fuente (Source).
+        Asegúrate de que los permisos del workflow estén configurados correctamente (la sección permissions: en el YML debería ser suficiente si los permisos por defecto del repositorio lo permiten).
+    (Opcional) Link Checking: Si quieres verificar enlaces rotos, descomenta el paso, elige una herramienta (como lychee-checker, que necesitarás instalar en un paso previo) y ajusta el comando y la ruta al directorio de build.
+
+Con este workflow, tu documentación se construirá y (si estás en la rama main o lo ejecutas manualmente) se desplegará automáticamente en GitHub Pages, ¡manteniéndola siempre fresca!

@@ -1,0 +1,211 @@
+# mkdocs.yml template
+# -------------------
+# Archivo de configuración principal para MkDocs.
+# Define la estructura, tema, plugins y metadatos de tu sitio de documentación.
+#
+# Cómo usar:
+# 1. Copia este contenido a un archivo llamado 'mkdocs.yml' en la raíz de tu proyecto.
+# 2. Reemplaza los placeholders [ASÍ].
+# 3. Instala las dependencias necesarias (MkDocs, tema, plugins):
+#    pip install mkdocs mkdocs-material mkdocstrings[python] pymdown-extensions mkdocs-minify-plugin mkdocs-git-revision-date-localized
+#    (Ajusta los plugins según los que descomentes/uses)
+# 4. Adapta la navegación (`nav:`), el tema y los plugins a tus necesidades.
+#
+# ¡La indentación en YAML es CRUCIAL! Usa espacios, no tabs.
+
+# --- Metadatos del Sitio ---
+site_name: "[Nombre del Sitio/Proyecto]" # Requerido: El título que aparece en la cabecera
+site_url: "[URL_DEL_SITIO_DESPLEGADO]"   # Requerido: URL base del sitio desplegado (importante para SEO, sitemap, enlaces absolutos)
+site_author: "[Tu Nombre o Nombre Org]"   # Opcional
+site_description: "[Descripción corta del sitio para motores de búsqueda]" # Opcional
+
+# --- Configuración del Repositorio (Opcional pero recomendado) ---
+repo_url: "[URL_DEL_REPOSITORIO_GIT]" # Ej: https://github.com/tu_usuario/tu_repo
+repo_name: "[Usuario/Org]/[Nombre Repo]" # Ej: tu_usuario/tu_repo (Texto del enlace)
+# edit_uri: "edit/main/docs/" # Permite enlaces "Editar esta página". Cambia 'main' por tu rama y 'docs/' por la ruta a tus archivos .md
+# Asegúrate de que el path en edit_uri coincida con la ubicación de tus archivos fuente .md respecto a la raíz del repo.
+# Si tus archivos están en la raíz, podría ser solo "edit/main/" o incluso "".
+
+# --- Tema ---
+# Usando el popular tema Material for MkDocs. Asegúrate de instalarlo: pip install mkdocs-material
+theme:
+  name: material
+  language: es # O 'en' u otro código de idioma soportado: https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/
+  palette:
+    # Paleta de colores día (light mode)
+    - media: "(prefers-color-scheme: light)" # Opcional, para auto-detectar
+      scheme: default # O 'slate' u otro
+      primary: teal # Elige un color primario: https://squidfunk.github.io/mkdocs-material/setup/changing-the-colors/#primary-color
+      accent: light-blue # Elige un color de acento
+      toggle:
+        icon: material/weather-sunny
+        name: Cambiar a modo oscuro
+    # Paleta de colores noche (dark mode)
+    - media: "(prefers-color-scheme: dark)" # Opcional
+      scheme: slate
+      primary: teal
+      accent: light-blue
+      toggle:
+        icon: material/weather-night
+        name: Cambiar a modo claro
+  font:
+    text: Roboto # O otras fuentes: https://squidfunk.github.io/mkdocs-material/setup/changing-the-fonts/
+    code: Roboto Mono
+  logo: assets/logo.png # Ruta a tu logo (relativa a la carpeta 'docs/' si la usas, o a la raíz si no)
+  favicon: assets/favicon.png # Ruta a tu favicon
+  features: # Habilita características del tema Material: https://squidfunk.github.io/mkdocs-material/setup/extensions/
+    - navigation.tabs # Navegación superior por pestañas (para secciones de primer nivel en 'nav:')
+    # - navigation.tabs.sticky # Pestañas superiores fijas
+    - navigation.sections # Secciones colapsables en la barra lateral izquierda
+    - navigation.expand # Expande automáticamente la sección activa en la barra lateral
+    # - navigation.indexes # Hace que las páginas 'index.md' dentro de secciones actúen como páginas índice
+    - navigation.top # Botón "Volver arriba"
+    - navigation.instant # Carga de páginas más rápida (precarga)
+    # - navigation.tracking # URL se actualiza al hacer scroll por las secciones
+    # - toc.integrate # Integra la tabla de contenidos de la página en la barra lateral izquierda (en lugar de a la derecha)
+    - search.suggest # Sugerencias de búsqueda mientras escribes
+    - search.highlight # Resalta los términos buscados en los resultados
+    # - search.share # Permite compartir enlaces de búsqueda
+    - content.code.copy # Botón para copiar bloques de código
+    - content.code.annotate # Añade anotaciones a bloques de código: https://squidfunk.github.io/mkdocs-material/reference/code-blocks/#code-annotations
+    # - content.tabs.link # Permite enlazar a pestañas específicas dentro del contenido
+    # - header.autohide # Oculta la cabecera al hacer scroll hacia abajo
+  icon: # Iconos personalizados del tema Material
+    repo: fontawesome/brands/git-alt # Icono para el enlace al repositorio
+
+# --- Estructura de Navegación (Sidebar / Tabs) ---
+# Define el orden y la jerarquía de tus páginas.
+# Si no defines 'nav', MkDocs intentará autogenerarla desde la estructura de carpetas.
+# Es RECOMENDADO definir 'nav' explícitamente para tener control total.
+nav:
+  - Inicio: index.md # Página principal
+  - Guía de Usuario:
+    - Instalación: user-guide/installation.md
+    - Empezando: user-guide/getting-started.md
+  - Tutoriales:
+    - Tutorial Básico: tutorials/basic.md
+    - Tutorial Avanzado: tutorials/advanced.md
+  - Referencia API:
+    - Módulo X: reference/module-x.md
+    - Módulo Y: reference/module-y.md # Puede generarse con mkdocstrings
+  - Cómo Contribuir: contributing.md # Enlace a tu CONTRIBUTING.md
+  # - Acerca de:
+  #   - Licencia: license.md # Enlace a tu LICENSE.md
+  #   - Código de Conducta: code-of-conduct.md
+
+# --- Plugins ---
+# Activa y configura plugins instalados. El orden puede importar.
+# Recuerda instalar cada plugin: pip install mkdocs-...
+plugins:
+  - search # Plugin de búsqueda integrado (necesario para Material search)
+  - git-revision-date-localized: # Muestra la fecha de última modificación desde Git
+      enable_creation_date: true
+      type: date # O 'datetime', 'iso_date', 'iso_datetime'
+      # fallback_to_build_date: true # Usar fecha de build si Git no está disponible
+  - mkdocstrings: # Genera documentación desde docstrings (¡muy potente!)
+      handlers:
+        python: # Configuración específica para Python
+          options:
+            show_root_heading: true
+            show_source: true # Mostrar enlace al código fuente
+            # Más opciones: https://mkdocstrings.github.io/python/usage/configuration/
+  - minify: # Minifica HTML, JS, CSS para producción
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+          remove_comments: true
+  # Otros plugins útiles (descomenta e instala si los necesitas):
+  # - mermaid2 # Para diagramas Mermaid: https://github.com/fralau/mkdocs-mermaid2-plugin
+  # - awesome-pages # Simplifica la navegación automática: https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin
+  # - redirects # Para crear redirecciones: https://github.com/mkdocs/mkdocs-redirects
+  # - social: # Parte de Material, para añadir tarjetas sociales (requiere 'pip install pillow cairosvg')
+  #     cards_layout_options:
+  #       background_color: "#0000" # Fondo transparente o color
+
+# --- Extensiones Markdown ---
+# Habilita funcionalidades extra para Markdown.
+# https://www.mkdocs.org/user-guide/configuration/#markdown_extensions
+# https://python-markdown.github.io/extensions/
+# https://facelessuser.github.io/pymdown-extensions/
+markdown_extensions:
+  # Extensiones estándar de Python-Markdown
+  - toc: # Tabla de contenidos
+      permalink: "#" # Añade enlaces permanentes a los encabezados
+      toc_depth: 3 # Profundidad de encabezados a incluir (ej: h1 a h3)
+  - admonition # Bloques especiales tipo Note, Warning, Tip: https://python-markdown.github.io/extensions/admonition/
+  - attr_list # Permite añadir atributos HTML/CSS a elementos Markdown
+  - md_in_html # Permite procesar Markdown dentro de bloques HTML
+  - tables # Soporte para tablas Markdown
+  # Extensiones de PyMdown (requieren pip install pymdown-extensions)
+  - pymdownx.highlight: # Resaltado de sintaxis para bloques de código
+      anchor_linenums: true # Permite enlazar a líneas de código específicas
+      line_spans: __span # Necesario para anotaciones
+      pygments_lang_class: true # Usa clases CSS para el lenguaje
+  - pymdownx.inlinehilite # Resaltado para código inline (`code`)
+  - pymdownx.snippets # Incluir contenido de otros archivos
+  - pymdownx.superfences: # Mejor manejo de bloques de código (permite anidación, pestañas)
+      custom_fences:
+        - name: mermaid # Para diagramas Mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed: # Crea contenido en pestañas (tabs)
+      alternate_style: true # Estilo alternativo (opcional)
+  - pymdownx.details # Bloques colapsables tipo <details>
+  - pymdownx.critic # Soporte para CriticMarkup (sugerir cambios ~~tachado~~ {++añadido++})
+  - pymdownx.caret # ^^Insertar^^ texto resaltado
+  - pymdownx.keys # ++Ctrl+C++ formato para teclas
+  * pymdownx.mark # ==Marcar== texto
+  * pymdownx.tilde # ~~Tachar~~ texto (subrayado si se usa con mark)
+  * pymdownx.emoji: # Soporte para :emojis:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# --- Assets Personalizados (Opcional) ---
+# Rutas relativas a la carpeta 'docs/' (o la raíz si no usas 'docs_dir')
+# extra_css:
+#  - stylesheets/extra.css
+# extra_javascript:
+#  - javascripts/extra.js
+
+# --- Copyright (Opcional) ---
+# Se muestra en el pie de página
+# copyright: Copyright &copy; 2025 [Tu Nombre o Nombre Org]
+
+# --- Configuración Específica del Sitio (Opcional) ---
+# Puedes definir variables personalizadas aquí y usarlas en plantillas o Markdown
+# extra:
+#   version: 1.2.3
+#   social:
+#     - icon: fontawesome/brands/github
+#       link: [URL_REPO]
+#     - icon: fontawesome/brands/twitter
+#       link: https://twitter.com/[TuUsuario]
+
+# --- Google Analytics (Opcional) ---
+# google_analytics:
+#  - ['UA-XXXXXXXXX-X', 'auto'] # Tu ID de seguimiento de Google Analytics UA
+#  - ['G-XXXXXXXXXX', 'auto']   # Tu ID de seguimiento de Google Analytics 4 (GA4)
+
+# --- Opciones de Build (Opcional) ---
+# docs_dir: 'source' # Cambia el directorio fuente si no es 'docs/' (o la raíz)
+# site_dir: 'public' # Cambia el directorio de salida si no es 'site/'
+# use_directory_urls: true # Usa URLs "limpias" sin .html (predeterminado)
+# strict: true # Falla el build si hay warnings (recomendado en CI)
+
+
+
+
+### Pasos Clave para Usar:
+
+    Instala Dependencias: Asegúrate de instalar MkDocs, el tema Material y los plugins que descomentes/uses (ej: pip install mkdocs mkdocs-material mkdocstrings[python] pymdown-extensions mkdocs-minify-plugin mkdocs-git-revision-date-localized). Puedes ponerlos en tu pyproject.toml o requirements.txt.
+    Reemplaza Placeholders: Busca todos los [PLACEHOLDERS] y reemplázalos con tus valores reales (nombre del sitio, URLs, etc.).
+    Adapta la Navegación (nav): Esta es la parte más importante para la estructura de tu sitio. Define aquí cómo se organizarán tus páginas en la barra lateral y/o pestañas superiores. Las rutas son relativas a tu docs_dir (normalmente docs/ o la raíz).
+    Configura el Tema: Ajusta la paleta de colores, fuentes, logo, favicon y las features del tema Material según tus preferencias.
+    Activa Plugins: Descomenta y configura los plugins que necesites. Recuerda instalarlos.
+    Ajusta Extensiones Markdown: La lista proporcionada es bastante completa, pero puedes añadir o quitar según necesites.
+    ¡Construye y Previsualiza!
+        mkdocs serve: Levanta un servidor local con auto-recarga para previsualizar tus cambios.
+        mkdocs build: Genera el sitio estático final en la carpeta site/ (o la que definas en site_dir).
+
+Este archivo mkdocs.yml te da un control muy detallado sobre cómo se ve y funciona tu sitio de documentación. ¡Personalízalo!

@@ -1,0 +1,101 @@
+# plantillas/workflows/lint-frontend.yml
+# ---------------------------------------
+# Plantilla de Workflow de GitHub Actions para Linting y Formato de Frontend (Node.js)
+#
+# Propósito: Verificar la calidad del código (linting) y el estilo (formato)
+#            en cada Pull Request o push a ramas de features.
+#            Es un workflow más ligero que el CI completo (ci-node.yml).
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/lint-frontend.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Ramas en el trigger 'on:'.
+#    - Versión de Node.js.
+#    - Gestor de paquetes (npm, yarn, pnpm) y comando de instalación.
+#    - Nombres de los scripts de lint/format/typecheck en tu 'package.json'.
+#
+# Herramientas Comunes Asumidas: ESLint, Prettier, TypeScript (opcional).
+
+name: 💅 Frontend Linting & Formatting
+
+# --- Disparadores del Workflow ---
+on:
+  push:
+    # Ejecutar en push a cualquier rama EXCEPTO main y develop (evita duplicar trabajo si ci-node.yml ya corre ahí)
+    branches-ignore:
+      - 'main'
+      - 'develop'
+      # [ADAPTAR] Añade otras ramas protegidas si es necesario
+  pull_request:
+    # Ejecutar en PRs dirigidos a las ramas principales
+    branches: [ "main", "develop" ] # [ADAPTAR]
+  # Permite ejecución manual
+  workflow_dispatch:
+
+# --- Trabajos (Jobs) ---
+jobs:
+  lint_and_format: # Nombre del job
+    name: Lint & Format Check
+    runs-on: ubuntu-latest # Usualmente suficiente para linting
+
+    steps:
+      # 1. Checkout del código
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Configurar Node.js
+      # Solo necesitamos una versión LTS reciente para correr las herramientas de linting.
+      - name: Configurar Node.js ⚡
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x' # [ADAPTAR] Elige una versión LTS activa
+          # [ADAPTAR] Especifica tu gestor de paquetes para el caché automático
+          cache: 'npm' # O 'yarn', 'pnpm'
+          # cache-dependency-path: '**/package-lock.json' # Opcional
+
+      # 3. Instalar Dependencias
+      # Usamos 'npm ci' para una instalación limpia basada en el lockfile.
+      # Podrías optimizar instalando solo devDependencies si tus linters están ahí y no necesitas deps de producción.
+      - name: Instalar dependencias 📦
+        run: npm ci
+        # Comentario: Alternativas:
+        # run: yarn install --frozen-lockfile
+        # run: pnpm install --frozen-lockfile
+
+      # 4. Ejecutar Linter (Ejemplo: ESLint)
+      # Asume un script 'lint' en package.json (ej: "eslint . --ext .js,.jsx,.ts,.tsx")
+      - name: Ejecutar ESLint 🧐
+        run: npm run lint
+        # Comentario: O directamente con npx si no tienes script:
+        # run: npx eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 # Falla si hay warnings
+
+      # 5. Verificar Formato (Ejemplo: Prettier)
+      # Asume un script 'format:check' en package.json (ej: "prettier --check .")
+      - name: Verificar formato con Prettier ✨
+        run: npm run format:check
+        # Comentario: O directamente con npx si no tienes script:
+        # run: npx prettier --check .
+
+      # 6. (Opcional) Type Checking (Si usas TypeScript)
+      # Asume un script 'typecheck' en package.json (ej: "tsc --noEmit")
+      - name: Type Check con TypeScript (si aplica) ʦ
+        # [ADAPTAR] Descomenta o elimina este paso si no usas TypeScript
+        run: npm run typecheck
+        # Comentario: Puedes añadir 'if: always()' si quieres que se ejecute aunque fallen los pasos anteriores.
+
+
+Puntos Clave y Adaptaciones:
+
+    Triggers: Este ejemplo está configurado para ejecutarse en PRs a main/develop y en pushes a otras ramas (feature branches),
+              evitando ejecuciones duplicadas si tu workflow ci-node.yml ya cubre los pushes a main/develop. Adapta las ramas 
+             (branches, branches-ignore) según tu estrategia.
+    Node.js: Solo se usa una versión LTS de Node, ya que generalmente no necesitas probar linting en múltiples versiones.
+    Caching: actions/setup-node@v4 maneja el caché del gestor de paquetes especificado (npm, yarn, pnpm).
+    Instalación: Usa npm ci o equivalentes (--frozen-lockfile) para garantizar que se usan las versiones del lockfile, crucial para la consistencia.
+    Scripts package.json: La plantilla asume que tienes scripts como lint, format:check, typecheck definidos en tu package.json. 
+                          Si no los tienes, puedes ejecutar las herramientas directamente usando npx (ver comentarios en la plantilla). ¡Adapta los comandos run:!
+    TypeScript: El paso de type checking solo es necesario si tu proyecto usa TypeScript.
+    Enfoque: Este workflow se centra solo en la calidad estática del código. No ejecuta tests ni hace builds, haciéndolo potencialmente más rápido que un CI completo.
+
+Puedes usar este workflow junto con ci-node.yml para tener chequeos más granulares o como una alternativa más ligera si solo te interesa el linting/formato en ciertas situaciones.

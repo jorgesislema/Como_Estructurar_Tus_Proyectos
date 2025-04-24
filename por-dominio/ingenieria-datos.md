@@ -22,7 +22,7 @@ Además de los principios generales, en ingeniería de datos enfatizamos:
 
 Proponemos la siguiente estructura como punto de partida flexible para proyectos de DE:
 
-´´´
+´´´ bash
 mi-proyecto-de/
 ├── .github/              # Workflows de CI/CD (tests, linting, deploy)
 │   └── workflows/

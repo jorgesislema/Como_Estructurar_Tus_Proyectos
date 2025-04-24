@@ -51,7 +51,7 @@ Los proyectos MLOps se guían por principios que combinan lo mejor de DevOps, Da
 ## Estructura de Directorios Recomendada para MLOps
 
 Un repositorio MLOps a menudo integra elementos de estructuras de Data Science y Data Engineering, pero con un fuerte enfoque en la automatización, el despliegue y la monitorización.
-´´´
+´´´ bash
 mi-proyecto-mlops/
 ├── .github/              # CI/CD/CT Workflows (GitHub Actions)
 │   └── workflows/

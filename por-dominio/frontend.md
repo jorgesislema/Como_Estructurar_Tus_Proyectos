@@ -18,7 +18,7 @@ Mientras que los principios generales siguen aplicando, en frontend ponemos espe
 
 La estructura puede variar ligeramente según el framework, pero la siguiente es una base común y sólida que promueve las buenas prácticas:
 
-´´´
+´´´ bash
 mi-proyecto-frontend/
 ├── .github/              # Workflows de CI/CD (tests, build, deploy)
 │   └── workflows/

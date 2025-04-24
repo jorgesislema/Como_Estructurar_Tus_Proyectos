@@ -1,0 +1,106 @@
+##El archivo requirements.txt es un formato clásico y muy conocido en el ecosistema Python para especificar las dependencias de un proyecto, principalmente para ser usado con pip install -r requirements.txt.
+
+Sin embargo, es importante destacar algo crucial en el contexto moderno (Abril 2025):
+
+Para nuevos proyectos o proyectos que buscan mejor reproducibilidad y gestión de dependencias, la práctica recomendada ha evolucionado hacia el uso de pyproject.toml para definir las dependencias abstractas (ej: "necesito requests versión 2 o superior") y herramientas como Poetry, Hatch, PDM o pip-compile (de pip-tools) para generar un archivo de bloqueo (lock file, que puede ser un requirements.txt con versiones exactas ==) que garantiza instalaciones reproducibles al fijar las versiones exactas de todas las dependencias y sub-dependencias.
+
+##¿Por qué el cambio?
+
+    Un requirements.txt mantenido manualmente a menudo usa rangos de versiones (>=) que pueden llevar a builds no reproducibles si las sub-dependencias cambian.
+    No maneja bien la resolución de conflictos entre sub-dependencias.
+    No separa fácilmente dependencias de desarrollo de las de producción (aunque se puede hacer con múltiples archivos).
+    pyproject.toml centraliza la configuración del proyecto (metadata, build, dependencias, herramientas).
+
+##Dicho esto, requirements.txt todavía se usa:
+
+    En proyectos legacy.
+    Como salida generada por herramientas como pip-compile.
+    Para definir dependencias en entornos específicos (ej: Dockerfiles simples, CI jobs).
+    En proyectos muy simples donde la sobrecarga de pyproject.toml + tooling se considera excesiva (aunque pyproject.toml es cada vez más ligero).
+
+##Plantilla (plantillas/CONFIG/requirements.txt)
+
+Aquí tienes una plantilla que muestra la sintaxis de requirements.txt, con comentarios explicando las opciones y reiterando las recomendaciones modernas:
+
+# requirements.txt template
+# -------------------------
+# Archivo tradicional para listar dependencias Python para 'pip install -r'.
+#
+# IMPORTANTE: Para gestión de dependencias robusta y reproducible en proyectos modernos,
+# se RECOMIENDA definir dependencias abstractas en 'pyproject.toml' [project].dependencies
+# y usar herramientas como Poetry, Hatch, PDM o pip-tools (pip-compile) para generar
+# un archivo de bloqueo (lock file) con versiones exactas (==).
+# Este archivo es más útil hoy en día como SALIDA de esas herramientas o para entornos específicos.
+#
+# Sintaxis Básica:
+# nombre_paquete[opcion_extra] <operador_version> version # Comentario
+
+# --- Ejemplos de Especificadores de Versión ---
+
+# Instalar la última versión disponible (¡NO RECOMENDADO para reproducibilidad!)
+# algún_paquete
+
+# Instalar una versión EXACTA (Bueno para locking / reproducibilidad)
+requests == 2.28.1
+
+# Instalar al menos esta versión (Cuidado con la reproducibilidad)
+pandas >= 1.4.0
+
+# Instalar una versión "compatible" (Ej: >=2.1 y <3.0)
+pydantic ~= 2.1
+
+# Instalar una versión menor a la especificada
+sqlalchemy < 2.0
+
+# Instalar dentro de un rango
+fastapi >= 0.90.0, < 0.100.0
+
+# --- Comentarios ---
+# Los comentarios empiezan con '#'
+# sqlalchemy-utils # Ejemplo: Temporalmente comentado
+
+# --- Incluir otros archivos ---
+# Útil para separar dependencias (ej: base, dev, test)
+# -r base.txt
+# -r requirements-dev.txt
+
+# --- Instalaciones Editables ---
+# Instala el proyecto actual en modo editable (los cambios en el código fuente se reflejan sin reinstalar)
+# Muy común para desarrollo local.
+# Asegúrate de que la ruta sea correcta ('.' si pyproject.toml está en raíz, './src' si usas src-layout a veces).
+# -e .
+
+# --- Instalación desde Control de Versiones ---
+# Instalar directamente desde un repositorio Git (branch, tag o commit específico)
+# git+https://github.com/usuario/repo.git@v1.0.0#egg=nombre_paquete_egg
+
+# --- Instalación desde Archivo Local ---
+# ./libs/mi_libreria_local-0.1.0-py3-none-any.whl
+
+# --- Hashes (Para seguridad y reproducibilidad exacta - generado por pip-compile) ---
+# flask == 2.2.2 \
+#    --hash=sha256:hash_largo_de_flask... \
+#    --hash=sha256:otro_hash_largo_de_flask...
+# werkzeug == 2.2.2 \  # vía flask
+#    --hash=sha256:hash_largo_de_werkzeug...
+
+# --- Consideraciones Finales ---
+# - Para generar un requirements.txt a partir de tu entorno actual (¡cuidado, puede incluir dependencias no deseadas!):
+#   pip freeze > requirements.txt
+#
+# - Para una mejor práctica con locking usando pip-tools:
+#   1. Crea un archivo 'requirements.in' con tus dependencias abstractas (ej: 'requests>=2.20').
+#   2. Instala pip-tools: pip install pip-tools
+#   3. Genera el requirements.txt bloqueado: pip-compile requirements.in -o requirements.txt
+#   4. Instala desde el archivo generado: pip install -r requirements.txt
+#
+# - Para proyectos nuevos, considera seriamente usar Poetry, Hatch o PDM que gestionan
+#   pyproject.toml y lock files de forma integrada.
+
+### Resumen:
+
+    Usa esta plantilla si necesitas el formato requirements.txt por razones específicas.
+    Entiende la sintaxis para especificar versiones.
+    Prioriza pyproject.toml + lock files (generados por herramientas) para proyectos nuevos o complejos para una mejor gestión de dependencias y reproducibilidad.
+
+Espero que esta plantilla y contexto te sean de ayuda.

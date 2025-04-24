@@ -1,0 +1,171 @@
+Un flujo de trabajo (workflow) de Integración Continua (CI) es esencial para cualquier proyecto Python moderno.
+ Automatiza tareas como el testing, linting y type checking en cada push o pull request, asegurando la calidad y consistencia del código.
+
+Esta plantilla está diseñada para GitHub Actions y cubre las tareas de CI más comunes para un proyecto Python.
+ Guárdala conceptualmente como plantillas/workflows/ci-python.yml. Para usarla en tu proyecto, deberás crear la carpeta .github/workflows/ en la raíz de tu repositorio y guardar este contenido allí, posiblemente renombrándolo (ej: ci.yml o python-app.yml).
+# plantillas/workflows/ci-python.yml
+# -----------------------------------
+# Plantilla de Workflow de GitHub Actions para Integración Continua (CI) de un Proyecto Python
+#
+# Propósito: Automatizar linting, type checking y testing en múltiples versiones de Python y OS.
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/ci-python.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Ramas en el trigger 'on:'.
+#    - Versiones de Python en la matriz 'strategy.matrix.python-version'.
+#    - Comandos de instalación de dependencias (pip, poetry, hatch).
+#    - Comandos de linting, type checking y testing (nombres de scripts, rutas).
+#    - Nombre/ruta del archivo de dependencias (requirements.txt, pyproject.toml).
+#    - Ruta al código fuente para la cobertura ('src/mi_paquete').
+#
+# Referencia de sintaxis de GitHub Actions: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: 🐍 Python CI
+
+# --- Disparadores del Workflow ---
+on:
+  push:
+    branches: [ "[main]", "[develop]" ] # [ADAPTAR] Ramas que disparan el workflow en push
+  pull_request:
+    branches: [ "[main]", "[develop]" ] # [ADAPTAR] Ramas objetivo para PRs que disparan el workflow
+  # Permite ejecutar este workflow manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch:
+
+# --- Trabajos (Jobs) ---
+# Define uno o más trabajos que se ejecutan en paralelo por defecto.
+jobs:
+  # Nombre del trabajo (puedes llamarlo como quieras, ej: 'build', 'lint_test')
+  test:
+    # Nombre descriptivo que aparece en la UI de GitHub Actions
+    name: Test en Python ${{ matrix.python-version }} / ${{ matrix.os }}
+
+    # Sistema Operativo donde se ejecutará el job
+    # Usamos una matriz para probar en varios OS
+    runs-on: ${{ matrix.os }}
+
+    # Estrategia de Matriz: Ejecutar el job para combinaciones de OS y Python
+    strategy:
+      # fail-fast: false -> permite que otros jobs de la matriz continúen si uno falla
+      fail-fast: false
+      matrix:
+        # [ADAPTAR] Elige los OS relevantes para tu proyecto
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # [ADAPTAR] Elige las versiones de Python que soportas (como strings)
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    # Pasos (Steps) que se ejecutan secuencialmente dentro del job
+    steps:
+      # 1. Checkout del código del repositorio
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Configurar el entorno Python para la versión de la matriz
+      - name: Configurar Python ${{ matrix.python-version }} 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          # Opcional: Cache para pip (acelera la instalación de dependencias)
+          # cache: 'pip' # Ver paso de caché explícito abajo para más control
+
+      # 3. (Opcional pero Recomendado) Cache de Dependencias
+      # Esto acelera las ejecuciones guardando las dependencias descargadas entre runs.
+      # La 'key' debe cambiar cuando cambien las dependencias.
+      - name: Cache de dependencias pip  caching ⚡
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip # Directorio de caché de pip
+          # [ADAPTAR] Cambia 'requirements.txt' si usas otro archivo o lockfile.
+          # Incluye OS y versión de Python en la key para evitar conflictos de caché.
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+      # Comentario: Si usas Poetry o Hatch, ajusta la ruta y la key:
+      # path: ~/.cache/pypoetry/virtualenvs o ~/.local/share/hatch
+      # key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      # key: ${{ runner.os }}-hatch-${{ matrix.python-version }}-${{ hashFiles('**/pyproject.toml', '**/hatch.toml') }}
+
+      # 4. Instalar Dependencias
+      - name: Instalar dependencias 📦
+        run: |
+          python -m pip install --upgrade pip
+          # [ADAPTAR] Elige el comando de instalación adecuado para tu proyecto:
+          pip install -r requirements-dev.txt # O requirements.txt, etc.
+          # pip install -e .[dev] # Si usas pyproject.toml con setuptools/hatch y extras_require
+          # poetry install --no-root --with dev # Si usas Poetry (instala dependencias dev)
+          # hatch env create && hatch run ... # Si usas Hatch (el run ejecutaría los siguientes pasos)
+        shell: bash # Asegura usar bash (o pwsh en windows)
+
+      # 5. Linting y Formateo (Ejemplo con Ruff)
+      # Ejecuta tus herramientas de calidad de código. Falla el job si encuentran problemas.
+      - name: Lint con Ruff ✨
+        run: |
+          # [ADAPTAR] Ajusta o reemplaza con tus comandos de linting/formato
+          ruff check .
+          ruff format --check .
+        shell: bash
+      # Comentario: Alternativas comunes:
+      # run: flake8 .
+      # run: black --check .
+      # run: isort --check .
+
+      # 6. Type Checking (Ejemplo con Mypy)
+      - name: Type Check con Mypy 🧐
+        run: |
+          # [ADAPTAR] Ajusta las rutas a tu código fuente y tests
+          mypy src/ tests/ --ignore-missing-imports
+        shell: bash
+
+      # 7. Ejecutar Tests (Ejemplo con Pytest y Coverage)
+      - name: Ejecutar tests con Pytest ✅
+        run: |
+          # [ADAPTAR] Ajusta el comando y la ruta para coverage ('src/mi_paquete')
+          pytest --cov=src/[nombre_paquete] --cov-report=term-missing --cov-report=xml:coverage.xml
+        shell: bash
+      # Comentario: Alternativa sin coverage:
+      # run: pytest tests/
+
+      # 8. (Opcional) Subir Reporte de Cobertura
+      # Guarda el reporte XML como un artefacto para usarlo con servicios como Codecov/Coveralls
+      # o para descargarlo manualmente.
+      - name: Subir reporte de cobertura 📊
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: coverage.xml
+          if-no-files-found: error # Falla si no se encuentra el archivo
+
+      # 9. (Opcional) Construir el paquete (si es una librería distribuible)
+      # - name: Construir Wheel y sdist 📦
+      #   run: |
+      #     python -m build --sdist --wheel --outdir dist/
+      #   shell: bash
+
+      # 10. (Opcional) Subir artefactos de build
+      # - name: Subir artefactos de build ⬆️
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: python-package-${{ matrix.os }}-py${{ matrix.python-version }}
+      #     path: dist/
+
+### Explicación Rápida:
+
+    name: Nombre del workflow que aparece en GitHub.
+    on: Define cuándo se ejecuta el workflow (push a main/develop, PRs a main/develop, manualmente). ¡Adapta las ramas!
+    jobs: Contiene los trabajos a ejecutar.
+        test: Nombre del job.
+        runs-on: Especifica el sistema operativo (tomado de la matriz).
+        strategy.matrix: Define combinaciones de OS y versiones de Python para ejecutar el job. ¡Adapta las versiones de Python!
+        steps: Las acciones secuenciales:
+            actions/checkout@v4: Descarga el código de tu repo.
+            actions/setup-python@v5: Instala la versión de Python especificada por la matriz.
+            actions/cache@v4: (Opcional pero muy recomendado) Cachea las dependencias para acelerar ejecuciones futuras. Adapta la key y path a tu gestor de paquetes.
+            run: pip install... (o poetry install, hatch run...): Instala las dependencias. Adapta este comando.
+            run: ruff...: Ejecuta el linter/formatter. Adapta a tus herramientas (Flake8, Black, etc.).
+            run: mypy...: Ejecuta el type checker. Adapta las rutas.
+            run: pytest...: Ejecuta los tests (con coverage opcional). Adapta el comando y la ruta para --cov.
+            actions/upload-artifact@v4: (Opcional) Sube archivos (como reportes de cobertura) generados durante la ejecución.
+
+Recuerda ajustar las secciones marcadas con [ADAPTAR] para que coincidan con la estructura y herramientas de tu proyecto específico. ¡Esta plantilla te dará una excelente base para tu CI en Python!

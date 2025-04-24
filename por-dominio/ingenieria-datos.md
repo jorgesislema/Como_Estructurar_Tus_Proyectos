@@ -22,7 +22,7 @@ Además de los principios generales, en ingeniería de datos enfatizamos:
 
 Proponemos la siguiente estructura como punto de partida flexible para proyectos de DE:
 
-´´´ bash
+``` bash
 mi-proyecto-de/
 ├── .github/              # Workflows de CI/CD (tests, linting, deploy)
 │   └── workflows/
@@ -72,7 +72,7 @@ mi-proyecto-de/
 ├── LICENSE               # Licencia
 └── README.md             # Descripción, setup, cómo ejecutar/desplegar
 
-´´´
+```
 **Explicación de Directorios Clave:**
 
 * **`dags/` (o `pipelines/`, etc.):** Contiene las definiciones que el orquestador (Airflow, Prefect, Dagster, etc.) leerá para ejecutar los pipelines.

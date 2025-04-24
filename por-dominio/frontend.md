@@ -18,7 +18,7 @@ Mientras que los principios generales siguen aplicando, en frontend ponemos espe
 
 La estructura puede variar ligeramente según el framework, pero la siguiente es una base común y sólida que promueve las buenas prácticas:
 
-´´´ bash
+```bash
 mi-proyecto-frontend/
 ├── .github/              # Workflows de CI/CD (tests, build, deploy)
 │   └── workflows/
@@ -78,7 +78,7 @@ mi-proyecto-frontend/
 ├── tsconfig.json         # Configuración TypeScript (si aplica)
 └── vite.config.js        # Configuración Vite (o webpack.config.js)
 
-´´´
+```
 **Explicación de Directorios Clave:**
 
 * **`public/`**: Contiene assets que **no** serán procesados por el build. Se copian tal cual al directorio final de build. Ideal para `index.html` (en algunos setups), favicons, `manifest.json`, etc.

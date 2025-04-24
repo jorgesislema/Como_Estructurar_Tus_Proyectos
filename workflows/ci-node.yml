@@ -1,0 +1,151 @@
+# plantillas/workflows/ci-node.yml
+# ---------------------------------
+# Plantilla de Workflow de GitHub Actions para Integración Continua (CI) de un Proyecto Node.js
+#
+# Propósito: Automatizar linting, formateo, type checking (TS), y testing
+#            en múltiples versiones de Node.js y opcionalmente OS.
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/ci-node.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Ramas en el trigger 'on:'.
+#    - Versiones de Node.js en la matriz 'strategy.matrix.node-version'.
+#    - Sistema Operativo(s) en la matriz 'strategy.matrix.os'.
+#    - Comandos de instalación (npm, yarn, pnpm). ¡Usa comandos que respeten el lockfile!
+#    - Nombres de los scripts definidos en tu 'package.json' (lint, test, build, typecheck, etc.).
+#
+# Referencia de sintaxis de GitHub Actions: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+# Referencia action setup-node: https://github.com/actions/setup-node
+
+name: ⚡ Node.js CI
+
+# --- Disparadores del Workflow ---
+on:
+  push:
+    branches: [ "main", "develop" ] # [ADAPTAR] Ramas que disparan el workflow en push
+  pull_request:
+    branches: [ "main", "develop" ] # [ADAPTAR] Ramas objetivo para PRs que disparan el workflow
+  # Permite ejecutar este workflow manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch:
+
+# --- Trabajos (Jobs) ---
+jobs:
+  build_and_test: # Nombre del job (puedes cambiarlo)
+    # Nombre descriptivo que aparece en la UI de GitHub Actions
+    name: Build & Test en Node ${{ matrix.node-version }} / ${{ matrix.os }}
+
+    # Sistema Operativo donde se ejecutará el job
+    runs-on: ${{ matrix.os }}
+
+    # Estrategia de Matriz: Ejecutar el job para combinaciones de OS y Node.js
+    strategy:
+      # fail-fast: false -> permite que otros jobs de la matriz continúen si uno falla
+      fail-fast: false
+      matrix:
+        # [ADAPTAR] Ubuntu suele ser suficiente para la mayoría de proyectos Node.js.
+        # Añade 'windows-latest', 'macos-latest' si necesitas probar compatibilidad específica de OS
+        # o si tienes dependencias binarias precompiladas.
+        os: [ubuntu-latest]
+        # [ADAPTAR] Elige las versiones LTS (Long Term Support) de Node.js que soportas.
+        # Usa '.x' para indicar la última versión menor/parche de esa línea mayor.
+        # Versiones LTS activas a Abril 2025: 18.x, 20.x, 22.x
+        node-version: ['18.x', '20.x', '22.x']
+
+    # Pasos (Steps) que se ejecutan secuencialmente dentro del job
+    steps:
+      # 1. Checkout del código del repositorio
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Configurar el entorno Node.js para la versión de la matriz
+      # La acción 'setup-node' también configura automáticamente el caché del gestor de paquetes.
+      - name: Configurar Node.js ${{ matrix.node-version }} ⚡
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          # [ADAPTAR] Especifica tu gestor de paquetes para que el caché funcione correctamente.
+          # Opciones: 'npm', 'yarn', 'pnpm'
+          cache: 'npm'
+          # cache-dependency-path: '**/package-lock.json' # O yarn.lock, pnpm-lock.yaml (opcional, a veces mejora el cache)
+
+      # 3. Instalar Dependencias
+      # ¡IMPORTANTE! Usa 'npm ci', 'yarn install --frozen-lockfile', o 'pnpm install --frozen-lockfile'
+      # para asegurar instalaciones reproducibles basadas en tu archivo de bloqueo (lock file).
+      - name: Instalar dependencias 📦
+        run: npm ci # Limpio y rápido, usa package-lock.json
+        # Comentario: Alternativas:
+        # run: yarn install --frozen-lockfile # Si usas Yarn v1 o v2+
+        # run: pnpm install --frozen-lockfile # Si usas PNPM
+
+      # 4. Linting y Formateo (Ejemplo)
+      # Asume que tienes scripts 'lint' y 'format:check' en tu package.json
+      - name: Lint y verificar formato ✨
+        run: |
+          # [ADAPTAR] Ejecuta tus scripts de linting y chequeo de formato
+          npm run lint
+          npm run format:check
+        # Comentario: Si no tienes un script para chequear formato, puedes correr prettier directamente:
+        # run: npx prettier --check .
+
+      # 5. Type Checking (Solo si usas TypeScript)
+      # Asume un script 'typecheck' en package.json (ej: "tsc --noEmit")
+      - name: Type Check con TypeScript 🧐 (si aplica)
+        # [ADAPTAR] Descomenta o elimina este paso si no usas TypeScript
+        run: npm run typecheck
+        # Comentario: Puedes añadir 'if: always()' si quieres que se ejecute incluso si el lint falla.
+
+      # 6. Ejecutar Tests (Ejemplo)
+      # Asume un script 'test' en package.json (ej: "jest", "vitest run")
+      # Considera añadir flags de coverage (ej: "jest --coverage")
+      - name: Ejecutar tests ✅
+        run: npm test
+        # Comentario: Ejemplo con coverage para Jest/Vitest:
+        # run: npm test -- --coverage
+
+      # 7. (Opcional) Construir el Proyecto
+      # Asume un script 'build' en package.json (ej: "tsc", "vite build", "next build")
+      # Útil para verificar que el build de producción funciona.
+      - name: Construir proyecto (si aplica) 🏗️
+        # [ADAPTAR] Descomenta o elimina si tu proyecto no tiene un paso de build
+        run: npm run build
+        # Comentario: Puedes añadir 'if: always()' si quieres que el build se intente incluso si los tests fallan.
+
+      # 8. (Opcional) Subir Reporte de Cobertura
+      # Guarda el reporte de cobertura como artefacto.
+      - name: Subir reporte de cobertura 📊
+        # [ADAPTAR] Descomenta y ajusta la ruta si generas reportes de cobertura
+        uses: actions/upload-artifact@v4
+        # Condición: Ejecutar solo si el paso de test (con ID 'test') fue exitoso o falló,
+        # para asegurar que el archivo exista (si se genera incluso en fallo) o no.
+        # Ajusta la lógica según cómo se genere tu reporte.
+        # if: success() || failure() # Ejecutar siempre que el paso 'test' termine
+        with:
+          name: coverage-report-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: coverage/lcov.info # [ADAPTAR] Ruta al archivo/directorio de cobertura (ej: lcov.info, clover.xml, ./coverage/)
+          if-no-files-found: warn # O 'ignore' o 'error'
+
+      # 9. (Opcional) Subir Artefactos de Build
+      # Guarda la salida del build (ej: carpeta 'dist' o 'build').
+      - name: Subir artefactos de build 📦
+        # [ADAPTAR] Descomenta y ajusta la ruta si tienes un paso de build
+        uses: actions/upload-artifact@v4
+        # Condición: Ejecutar solo si el paso de build (con ID 'build') fue exitoso.
+        # if: success() && steps.build.outcome == 'success' # Asegura que el build terminó bien
+        with:
+          name: build-artifacts-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: dist/ # [ADAPTAR] Ruta al directorio de build (ej: 'dist', 'build', 'out')
+          if-no-files-found: error # Falla si no se encuentra el directorio de build
+
+----
+
+Recordatorios Clave:
+
+    Lock Files: ¡Usa npm ci, yarn install --frozen-lockfile o pnpm install --frozen-lockfile! Es la clave para builds reproducibles en CI.
+    Scripts package.json: Este workflow asume que tienes scripts definidos en tu package.json para lint, test, build, typecheck, etc. Adapta los comandos run: para que coincidan con tus scripts.
+    Matrix: Ajusta las versiones de Node.js y los sistemas operativos en la matriz según lo que tu proyecto necesite soportar. Testear en las versiones LTS activas es una buena práctica.
+    Caching: La acción actions/setup-node@v4 maneja el caché automáticamente si especificas el cache: correcto (npm, yarn, pnpm).
+    TypeScript: Los pasos de type checking (npm run typecheck) solo son relevantes si usas TypeScript.
+    Artefactos: Descomenta y adapta los pasos de upload-artifact si necesitas guardar reportes de cobertura o los resultados del build.
+
+Esta plantilla te proporciona una base sólida y moderna para la CI de tus proyectos Node.js. ¡Personalízala!

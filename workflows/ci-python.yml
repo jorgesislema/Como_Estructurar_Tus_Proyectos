@@ -2,7 +2,8 @@ Un flujo de trabajo (workflow) de Integración Continua (CI) es esencial para cu
  Automatiza tareas como el testing, linting y type checking en cada push o pull request, asegurando la calidad y consistencia del código.
 
 Esta plantilla está diseñada para GitHub Actions y cubre las tareas de CI más comunes para un proyecto Python.
- Guárdala conceptualmente como plantillas/workflows/ci-python.yml. Para usarla en tu proyecto, deberás crear la carpeta .github/workflows/ en la raíz de tu repositorio y guardar este contenido allí, posiblemente renombrándolo (ej: ci.yml o python-app.yml).
+ Guárdala conceptualmente como plantillas/workflows/ci-python.yml. Para usarla en tu proyecto, deberás crear la carpeta 
+.github/workflows/ en la raíz de tu repositorio y guardar este contenido allí, posiblemente renombrándolo (ej: ci.yml o python-app.yml).
 # plantillas/workflows/ci-python.yml
 # -----------------------------------
 # Plantilla de Workflow de GitHub Actions para Integración Continua (CI) de un Proyecto Python

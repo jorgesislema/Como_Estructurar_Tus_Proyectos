@@ -1,0 +1,141 @@
+# plantillas/workflows/test-notebooks.yml
+# ---------------------------------------
+# Plantilla de Workflow de GitHub Actions para "Testear" Jupyter Notebooks
+#
+# Propósito: Asegurar que los notebooks en el repositorio se ejecutan sin errores.
+#            Opcionalmente, verifica el formato y linting del código en las celdas.
+#            NO verifica la corrección de las salidas, solo la ejecución exitosa.
+#
+# Cómo usar:
+# 1. Crea la carpeta '.github/workflows/' en la raíz de tu repositorio si no existe.
+# 2. Copia este contenido a un archivo dentro de esa carpeta (ej: '.github/workflows/test-notebooks.yml').
+# 3. Adapta las secciones marcadas con "[ADAPTAR]" a tu proyecto:
+#    - Ramas y paths en el trigger 'on:'.
+#    - Versión de Python.
+#    - Comando de instalación de dependencias.
+#    - Lista de dependencias EXTRA necesarias para EJECUTAR los notebooks (jupyter, nbconvert, librerías usadas).
+#    - Ruta a la carpeta de notebooks ('notebooks/').
+#    - Timeout para la ejecución de notebooks.
+#
+# Herramientas Usadas:
+# - nbconvert: Para ejecutar los notebooks.
+# - nbqa (Opcional): Para correr linters/formatters (como Ruff, Black) en el código de los notebooks.
+
+name: 🧪 Test Jupyter Notebooks
+
+# --- Disparadores del Workflow ---
+on:
+  push:
+    branches: [ "main", "develop" ] # [ADAPTAR] Ramas que disparan en push
+    # Solo ejecutar si cambian notebooks o este workflow
+    paths:
+      - 'notebooks/**/*.ipynb' # [ADAPTAR] Ruta a tus notebooks
+      - '.github/workflows/test-notebooks.yml'
+  pull_request:
+    branches: [ "main", "develop" ] # [ADAPTAR] Ramas objetivo para PRs
+    paths:
+      - 'notebooks/**/*.ipynb' # [ADAPTAR] Ruta a tus notebooks
+      - '.github/workflows/test-notebooks.yml'
+  # Permite ejecución manual
+  workflow_dispatch:
+
+# --- Trabajos (Jobs) ---
+jobs:
+  execute_notebooks:
+    name: Ejecutar Notebooks
+    runs-on: ubuntu-latest # Ubuntu suele ser suficiente
+
+    steps:
+      # 1. Checkout del código
+      - name: Checkout código fuente 🛎️
+        uses: actions/checkout@v4
+
+      # 2. Configurar Python
+      - name: Configurar Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # [ADAPTAR] Elige una versión relevante para tus notebooks
+          # cache: 'pip' # Cache básico de pip
+
+      # 3. (Opcional) Cache de Dependencias (Más específico)
+      - name: Cache de dependencias pip ⚡
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('**/requirements*.txt', '**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+      # Comentario: Adapta si usas Poetry/Hatch para el cache
+
+      # 4. Instalar Dependencias del Proyecto y para Notebooks
+      - name: Instalar dependencias 📦
+        run: |
+          python -m pip install --upgrade pip
+          # Instala dependencias del proyecto
+          # [ADAPTAR] Usa el comando apropiado para tu proyecto
+          pip install -r requirements.txt # O requirements-dev.txt, etc.
+          # poetry install --with dev
+          # hatch env create && hatch run ...
+
+          # Instala dependencias ESPECÍFICAS para ejecutar notebooks y hacer linting (si aplica)
+          # [ADAPTAR] Añade aquí TODAS las librerías que tus notebooks importan + jupyter + nbconvert + nbqa + ruff
+          pip install jupyter nbconvert ipykernel matplotlib pandas seaborn scikit-learn nbqa ruff
+        shell: bash
+
+      # 5. (Opcional) Linting y Formateo de Notebooks con nbqa + Ruff
+      # nbqa permite correr herramientas como Ruff sobre el código DENTRO de los notebooks.
+      - name: Verificar formato con Ruff (vía nbqa) ✨
+        # [ADAPTAR] Descomenta/elimina si no quieres verificar formato
+        run: nbqa ruff format --check notebooks/ # [ADAPTAR] Ruta a notebooks
+        shell: bash
+
+      - name: Lint con Ruff (vía nbqa) ✨
+        # [ADAPTAR] Descomenta/elimina si no quieres hacer linting
+        run: nbqa ruff check notebooks/ # [ADAPTAR] Ruta a notebooks
+        shell: bash
+
+      # 6. Ejecutar TODOS los Notebooks
+      # Usa 'find' para localizar todos los .ipynb y 'nbconvert' para ejecutarlos.
+      # '--execute' corre el notebook de principio a fin.
+      # '--to notebook' simplemente sobreescribe el notebook con la salida (o crea uno nuevo si no usas --inplace).
+      # '--inplace' modifica el notebook original (¡CUIDADO! Puede generar diffs grandes si las salidas cambian).
+      # '--allow-errors' permitiría que el paso termine con éxito aunque un notebook falle (NO RECOMENDADO para CI).
+      # '--ExecutePreprocessor.timeout=600' establece un timeout en segundos (ej: 10 minutos) por notebook.
+      - name: Ejecutar notebooks con nbconvert 🚀
+        run: |
+          find notebooks/ -name '*.ipynb' -print0 | xargs -0 -n 1 jupyter nbconvert --to notebook --execute \
+            --inplace \
+            --ExecutePreprocessor.timeout=600 \
+            --ExecutePreprocessor.kernel_name=python3 # Asegura usar el kernel correcto
+        shell: bash
+        # [ADAPTAR] Ajusta la ruta 'notebooks/', el timeout y el kernel_name.
+        # Considera NO usar '--inplace' y usar '--output-dir=executed_notebooks/' para guardar
+        # los notebooks ejecutados en otro lugar y evitar cambios en el repo si las salidas cambian.
+        # Si un notebook falla, este comando fallará y el job de CI fallará (¡eso es bueno!).
+
+      # 7. (Opcional - Avanzado) Verificar si hay salidas grandes en Git diff
+      # Este paso intenta detectar si accidentalmente se commitearon notebooks con salidas muy grandes
+      # después de la ejecución (si no usaste --inplace o si limpiaste las salidas antes del commit).
+      # Puede ser complejo de ajustar correctamente.
+      # - name: Verificar outputs grandes en diff 🔍
+      #   run: |
+      #     git diff --stat HEAD^ HEAD -- notebooks/**/*.ipynb # [ADAPTAR] Ruta
+      #     # Añade lógica aquí para fallar si el diff es demasiado grande o si detecta ciertos patrones.
+      #     # echo "Revisar manualmente si hay outputs grandes commiteados en notebooks."
+      #   shell: bash
+
+Explicación y Puntos Clave:
+
+    Triggers (on:): El workflow se ejecuta en push/PR a las ramas principales, pero solo si cambian archivos dentro de notebooks/ o el propio workflow. Esto evita ejecuciones innecesarias. ¡Adapta las ramas y la ruta!
+    Dependencias: Es crucial instalar no solo las dependencias de tu proyecto (requirements.txt / pyproject.toml), sino también jupyter, nbconvert, ipykernel y todas las librerías que los notebooks importan (pandas, matplotlib, seaborn, sklearn, etc.). ¡Asegúrate de listarlas todas!
+    Linting/Formato (Opcional): Usar nbqa con ruff (o black, flake8) es una buena práctica para mantener limpio el código dentro de las celdas.
+    Ejecución (nbconvert --execute): Este es el núcleo. Ejecuta cada notebook. Si alguna celda lanza una excepción, nbconvert fallará y, por lo tanto, el job de CI fallará, alertándote del problema.
+        --inplace: Conveniente pero peligroso. Modifica los archivos originales. Si las salidas cambian (gráficos, dataframes impresos), generará un git diff grande. Generalmente, 
+        es mejor limpiar las salidas (jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace notebooks/*.ipynb) antes de commitear, y no usar --inplace en CI, sino --output-dir para verificar solo la ejecución.
+        Pero para un test simple de "corre o no corre", --inplace en CI puede ser suficiente (asumiendo que no commiteas las salidas).
+        timeout: ¡Importante! Evita que un notebook colgado bloquee tu CI indefinidamente. Ajusta el valor según tus notebooks más largos.
+        kernel_name: Asegúrate de que coincida con el kernel que tus notebooks esperan (python3 es común).
+    Testing de Salidas: Este workflow no valida que las salidas (gráficos, resultados numéricos) sean correctas, solo que el código se ejecute. Para validar salidas se necesitan técnicas más avanzadas (ej: pytest-nbval, comparar salidas con versiones "doradas", aserciones dentro del notebook).
+
+Adapta esta plantilla a las necesidades y complejidad de tus notebooks. ¡Es un buen primer paso para asegurar que no se rompan silenciosamente!

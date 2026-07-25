@@ -105,7 +105,7 @@ Esta estructura separa claramente el código, los datos, los modelos, la configu
 
 ## Contribuciones a este Ejemplo ✨
 
-Las mejoras a *esta plantilla específica* son bienvenidas. Sigue la guía general (`comunidad/como-contribuir.md`) indicando que tu aporte es para `ejemplos/machine-learning-pipeline`.
+Las mejoras a *esta plantilla especifica* son bienvenidas. Sigue la guia general (`plantillas/CONTRIBUTING.md`) indicando que tu aporte es para `ejemplos/machine-learning-pipeline`.
 
 ¡Esperamos que esta estructura te ayude a construir pipelines de ML más robustos y reproducibles! 🤖📈
 

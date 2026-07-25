@@ -92,7 +92,7 @@ La estructura está centrada alrededor del proyecto Dagster y opcionalmente un p
 
 ## Contribuciones a este Ejemplo ✨
 
-Si tienes sugerencias para mejorar *esta plantilla específica de data engineering*, por favor sigue la guía de contribución general (`comunidad/como-contribuir.md`) indicando que tu sugerencia es para `ejemplos/data-engineering-pipeline`.
+Si tienes sugerencias para mejorar *esta plantilla especifica de data engineering*, por favor sigue la guia de contribucion general (`plantillas/CONTRIBUTING.md`) indicando que tu sugerencia es para `ejemplos/data-engineering-pipeline`.
 
 ¡Construye pipelines de datos robustos y observables con esta base! 💧⚙️
 

@@ -1,0 +1,31 @@
+# .gitignore para el repositorio de documentacion
+
+# Dependencias de herramientas internas
+.qodo/
+
+# Python (prevencion, aunque esto es solo documentacion)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.bak
+~$*
+
+# OS
+Desktop.ini
+
+# Documentos generados (Word, PDF)
+*.docx
+*.pdf
+*.odt

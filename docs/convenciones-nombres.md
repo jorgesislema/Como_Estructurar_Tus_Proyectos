@@ -2,7 +2,7 @@
 
 La forma en que nombramos los elementos dentro de un repositorio —desde las ramas y commits hasta los archivos y directorios— tiene un impacto profundo en la legibilidad, mantenibilidad y colaboración del proyecto. Establecer y seguir convenciones de nombres claras y consistentes es una de las prácticas fundamentales más efectivas para mejorar la calidad de cualquier base de código o proyecto.
 
-Este documento describe las convenciones de nombres recomendadas dentro del ecosistema de `repo-universal-structure`. El objetivo principal es fomentar la **claridad**, la **consistencia** y facilitar la **automatización**.
+Este documento describe las convenciones de nombres recomendadas dentro del ecosistema de `Como_Estructurar_Tus_Proyectos`. El objetivo principal es fomentar la **claridad**, la **consistencia** y facilitar la **automatizacion**.
 
 ## Principios Generales
 

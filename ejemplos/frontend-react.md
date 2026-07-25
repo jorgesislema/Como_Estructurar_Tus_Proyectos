@@ -123,7 +123,7 @@ Este proyecto utiliza una estructura común en aplicaciones React modernas:
 
 ## Contribuciones a este Ejemplo ✨
 
-Si tienes ideas para mejorar *esta plantilla específica*, por favor, sigue la guía de contribución general (`comunidad/como-contribuir.md`) e indica que tu aporte es para `ejemplos/frontend-react`.
+Si tienes ideas para mejorar *esta plantilla especifica*, por favor, sigue la guia de contribucion general (`plantillas/CONTRIBUTING.md`) e indica que tu aporte es para `ejemplos/frontend-react`.
 
 ¡Esperamos que esta plantilla te dé un excelente punto de partida para tus aventuras con React! 🎉
 

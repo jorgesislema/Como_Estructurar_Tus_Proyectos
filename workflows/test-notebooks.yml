@@ -129,7 +129,7 @@ Explicación y Puntos Clave:
 
     Triggers (on:): El workflow se ejecuta en push/PR a las ramas principales, pero solo si cambian archivos dentro de notebooks/ o el propio workflow. Esto evita ejecuciones innecesarias. ¡Adapta las ramas y la ruta!
     Dependencias: Es crucial instalar no solo las dependencias de tu proyecto (requirements.txt / pyproject.toml), sino también jupyter, nbconvert, ipykernel y todas las librerías que los notebooks importan (pandas, matplotlib, seaborn, sklearn, etc.). ¡Asegúrate de listarlas todas!
-    Linting/Formato (Opcional): Usar nbqa con ruff (o black, flake8) es una buena práctica para mantener limpio el código dentro de las celdas.
+    Linting/Formato (Opcional): Usar nbqa con ruff es una buena practica para mantener limpio el codigo dentro de las celdas.
     Ejecución (nbconvert --execute): Este es el núcleo. Ejecuta cada notebook. Si alguna celda lanza una excepción, nbconvert fallará y, por lo tanto, el job de CI fallará, alertándote del problema.
         --inplace: Conveniente pero peligroso. Modifica los archivos originales. Si las salidas cambian (gráficos, dataframes impresos), generará un git diff grande. Generalmente, 
         es mejor limpiar las salidas (jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace notebooks/*.ipynb) antes de commitear, y no usar --inplace en CI, sino --output-dir para verificar solo la ejecución.

@@ -111,22 +111,10 @@ Este ejemplo utiliza **PNPM Workspaces** para manejar las dependencias entre paq
 
 ## Contribuciones a este Ejemplo ✨
 
-Las sugerencias para mejorar *esta plantilla específica de monorepo* son bienvenidas. Sigue la guía general (`comunidad/como-contribuir.md`) indicando que tu aporte es para `ejemplos/fullstack-monorepo`.
+Las sugerencias para mejorar *esta plantilla especifica de monorepo* son bienvenidas. Sigue la guia general (`plantillas/CONTRIBUTING.md`) indicando que tu aporte es para `ejemplos/fullstack-monorepo`.
 
 ¡Esperamos que esta plantilla te dé un impulso inicial fantástico para tus proyectos fullstack en monorepo! ¡Disfruta de la potencia y la organización! 🚀
-``` bash
-
-Okay, ¡un ejemplo de monorepo fullstack! Este es un patrón cada vez más popular, especialmente en el ecosistema de TypeScript/JavaScript, para gestionar proyectos complejos con múltiples aplicaciones (frontend, backend, etc.) y librerías compartidas dentro de un único repositorio.
-
-Para este ejemplo, utilizaremos un enfoque moderno con PNPM Workspaces para la gestión eficiente de dependencias y Turborepo para la orquestación de tareas y el cacheo inteligente de builds/tests. La pila tecnológica será React (con Vite y TypeScript) para el frontend y Node.js (con Express y TypeScript) para el backend, además de un paquete compartido.
-
-Asumiendo que este ejemplo pertenece a ejemplos/, procederé a generar la estructura y el README para:
-
-ejemplos/fullstack-monorepo/
-
-Avísame si prefieres otra ubicación.
-Estructura Propuesta para ejemplos/fullstack-monorepo/
-
+```bash
 ejemplos/fullstack-monorepo/
 ├── .gitattributes              # (Opcional) Para normalizar finales de línea
 ├── .gitignore                  # Ignorar node_modules, dist, .turbo, .env, etc.

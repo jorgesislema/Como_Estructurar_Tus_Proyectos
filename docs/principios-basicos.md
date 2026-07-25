@@ -2,7 +2,7 @@
 
 Una estructura de repositorio bien definida no surge por accidente. Es el resultado de aplicar conscientemente un conjunto de principios rectores que buscan optimizar la forma en que organizamos, desarrollamos, mantenemos y colaboramos en nuestros proyectos.
 
-En `repo-universal-structure`, no creemos en dogmas inflexibles, sino en **directrices adaptables**. Los principios que presentamos a continuación son la brújula que guía nuestras recomendaciones. Te alentamos a comprenderlos profundamente para que puedas aplicarlos de manera inteligente y adaptarlos al contexto único de cada uno de tus proyectos.
+En `Como_Estructurar_Tus_Proyectos`, no creemos en dogmas inflexibles, sino en **directrices adaptables**. Los principios que presentamos a continuación son la brújula que guía nuestras recomendaciones. Te alentamos a comprenderlos profundamente para que puedas aplicarlos de manera inteligente y adaptarlos al contexto único de cada uno de tus proyectos.
 
 ## Nuestros Principios Clave
 

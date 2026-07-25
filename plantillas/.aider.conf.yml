@@ -1,0 +1,61 @@
+# .aider.conf.yml -- Plantilla de Configuracion para Aider
+
+Copiar este archivo como `.aider.conf.yml` en la raiz del proyecto.
+Aider (herramienta de pair programming con IA en terminal) lo usa automaticamente.
+
+---
+
+```yaml
+# .aider.conf.yml
+# Configuracion de Aider para el proyecto
+
+# Modelo a utilizar
+model: anthropic/claude-sonnet-4-20250514
+# Alternativas:
+# model: openai/gpt-4o
+# model: openrouter/deepseek/deepseek-chat
+# model: openrouter/anthropic/claude-sonnet-4-20250514
+# model: groq/llama-3.1-70b-versatile
+
+# Archivos de contexto que Aider debe leer
+read:
+  - RULES.md
+  - CONTEXTO.md
+  - AGENTS.md
+
+# Evitar commits automaticos
+auto-commits: false
+
+# Comando de linting (se ejecuta en archivos modificados)
+lint-cmd: ruff check .
+
+# Comando de testing (se ejecuta al final de cada cambio)
+test-cmd: pytest
+
+# Editor (opcional)
+# editor: code
+
+# Modo oscuro
+dark-mode: true
+
+# Editar archivos en vez de mostrar diffs
+edit-format: editor-diff
+```
+
+---
+
+## Instrucciones de Uso
+
+1. Copiar a `.aider.conf.yml` en la raiz del proyecto
+2. Elegir el modelo (OpenAI, Anthropic, DeepSeek, Groq, etc.)
+3. Ajustar `read:` con los archivos de contexto de tu proyecto
+4. Configurar `lint-cmd` y `test-cmd` para tu stack
+5. Mantener `auto-commits: false` para control manual de commits
+
+## Nota sobre el modelo
+
+Elige segun tu presupuesto y necesidades:
+- `anthropic/claude-sonnet-4-20250514`: Mejor para codigo complejo (pago)
+- `openai/gpt-4o`: Buen balance calidad/precio (pago)
+- `deepseek/deepseek-chat`: Excelente relacion calidad/precio (barato)
+- `groq/llama-3.1-70b-versatile`: Muy rapido, bueno para tareas simples (barato)

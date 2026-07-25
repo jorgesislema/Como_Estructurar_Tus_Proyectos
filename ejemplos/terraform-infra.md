@@ -106,7 +106,7 @@ Este ejemplo se centra en estructurar un proyecto Terraform para manejar **múlt
 
 ## Contribuciones a este Ejemplo ✨
 
-Las mejoras a *esta plantilla específica de Terraform* son bienvenidas. Sigue la guía general (`comunidad/como-contribuir.md`) indicando que tu aporte es para `ejemplos/terraform-infra`.
+Las mejoras a *esta plantilla especifica de Terraform* son bienvenidas. Sigue la guia general (`plantillas/CONTRIBUTING.md`) indicando que tu aporte es para `ejemplos/terraform-infra`.
 
 ¡Esperamos que esta estructura te sirva como una base sólida y escalable para gestionar tu infraestructura como código con Terraform! ☁️⚙️
 

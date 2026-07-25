@@ -54,7 +54,7 @@ jobs:
         # [ADAPTAR] Elige los OS relevantes para tu proyecto
         os: [ubuntu-latest, macos-latest, windows-latest]
         # [ADAPTAR] Elige las versiones de Python que soportas (como strings)
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     # Pasos (Steps) que se ejecutan secuencialmente dentro del job
     steps:

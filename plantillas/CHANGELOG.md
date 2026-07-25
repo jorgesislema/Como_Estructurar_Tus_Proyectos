@@ -1,44 +1,57 @@
 # Changelog
 
-Todos los cambios notables en este proyecto serán documentados en este archivo.
+Todos los cambios notables en este proyecto seran documentados en este archivo.
 
-El formato está basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
-y este proyecto adhiere a [Versionamiento Semántico (SemVer)](https://semver.org/lang/es/).
+El formato esta basado en [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
+y este proyecto adhiere a [Versionamiento Semantico (SemVer)](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
 ### Added
-* * ### Changed
-* ### Fixed
-* ## [1.0.0] - 2025-04-24 ### Added
-* ¡Lanzamiento inicial estable! 🎉
-* Funcionalidad principal X implementada.
-* Funcionalidad de soporte Y añadida.
-* Documentación inicial y tests básicos.
+- 
 
 ### Changed
-* Mejora del rendimiento en el módulo Z.
+- 
 
 ### Fixed
-* Corregido error al manejar la entrada W.
+- 
 
-## [0.1.0] - 2025-03-15 ### Added
-* Versión inicial del proyecto.
-* Funcionalidades básicas A y B.
+## [1.0.0] - 2025-07-25
 
-[Unreleased]: [URL_REPO]/compare/v1.0.0...HEAD
-[1.0.0]: [URL_REPO]/compare/v0.1.0...v1.0.0
-[0.1.0]: [URL_REPO]/releases/tag/v0.1.0
+### Added
+- Lanzamiento inicial estable.
+- Documentacion modular completa (16 docs).
+- Guias por dominio (10 dominios).
+- Ejemplos practicos de repositorios modelo (7 ejemplos).
+- Plantillas profesionales (README, LICENSE, CONTRIBUTING, etc.).
+- Workflows de GitHub Actions listos para usar (6 workflows).
+- Casos de estudio de empresas lideres (8 casos).
+- Seccion completa de Ingenieria de IA y Vibe Coding (4 docs, 4 dominios, 4 ejemplos, 7 plantillas).
+- Seccion completa de Infraestructura, Despliegue y Operaciones (8 docs, 1 ejemplo).
 
-### Cómo Usar esta Plantilla:
+### Changed
+- README.md reestructurado como indice navegable con mapa por perfil.
 
-    Copia y Renombra: Copia este contenido a un archivo llamado CHANGELOG.md en la raíz de tu repositorio.
-    Reemplaza Placeholders: Cambia [URL_REPO] por la URL real de tu repositorio (ej: https://github.com/tu_usuario/tu_proyecto).
-    Registra Cambios: A medida que trabajas en la próxima versión, añade entradas bajo la sección [Unreleased] en la categoría apropiada (Added, Changed, Fixed, etc.). Sé conciso pero descriptivo.
-    Al Lanzar una Versión:
-        Reemplaza [Unreleased] con la nueva versión y la fecha actual (ej: ## [1.1.0] - 2025-05-10).
-        Actualiza el enlace de comparación al final del archivo para que apunte a la nueva versión (ej: [Unreleased]: [URL_REPO]/compare/v1.1.0...HEAD, [1.1.0]: [URL_REPO]/compare/v1.0.0...v1.1.0).
-        Crea una nueva sección ## [Unreleased] vacía justo debajo del título principal para empezar a registrar los cambios de la siguiente versión.
-        Crea un tag Git correspondiente a la versión (ej: git tag v1.1.0) y publícalo.
+## [0.1.0] - 2025-03-15
 
- Mantener un CHANGELOG.md actualizado y bien formateado es una excelente práctica que tus usuarios y colaboradores agradecerán enormemente.
+### Added
+- Version inicial de la guia.
+- Documentacion fundamental de principios arquitectonicos.
+- Primeros ejemplos de estructuras de repositorio.
+
+[Unreleased]: https://github.com/usuario/repo/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/usuario/repo/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/usuario/repo/releases/tag/v0.1.0
+
+---
+
+### Como Usar esta Plantilla
+
+1. Copia este contenido a un archivo llamado `CHANGELOG.md` en la raiz de tu repositorio.
+2. Reemplaza las URLs de ejemplo por las URLs reales de tu repositorio.
+3. Registra cambios bajo `[Unreleased]` en la categoria apropiada (Added, Changed, Fixed, Deprecated, Removed, Security).
+4. Al lanzar una version:
+   - Reemplaza `[Unreleased]` con la nueva version y fecha.
+   - Actualiza los enlaces de comparacion al final del archivo.
+   - Crea una nueva seccion `[Unreleased]` vacia arriba.
+   - Crea un tag Git (`git tag v1.1.0`) y publicalo.

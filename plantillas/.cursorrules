@@ -1,0 +1,78 @@
+# .cursorrules -- Plantilla de Reglas para Cursor AI
+
+Copiar este archivo como `.cursorrules` en la raiz del proyecto o como `.cursor/rules` (un archivo por dominio de reglas).
+
+---
+
+```markdown
+# Reglas de Cursor para [NOMBRE_DEL_PROYECTO]
+
+## Lenguaje y Estilo
+- Lenguaje: [Python 3.12 | TypeScript 5.x]
+- Framework: [FastAPI | React 18 | Next.js 14 | etc.]
+- Formateador: [Ruff | Prettier | ESLint]
+- Estilo: [tipos estrictos | composicion sobre herencia | async/await]
+
+## Al Generar Codigo
+- Usa las librerias ya instaladas en el proyecto (ver [pyproject.toml | package.json])
+- Sigue los mismos patrones de codigo existentes
+- Nombra variables y funciones descriptivamente
+- Incluye tipos en todas las firmas de funciones
+- Maneja errores explicitamente (no ignores excepciones)
+- No uses [print() | console.log] para debugging
+- No introduzcas nuevas dependencias
+
+## Al Editar Codigo
+- Lee el contexto primero (archivos relacionados, imports, tests)
+- Minimiza cambios innecesarios
+- Preserva el estilo existente
+- No reformatees archivos completos a menos que se pida
+- Si un cambio afecta tests, actualiza los tests
+
+## Estructura del Proyecto
+```bash
+src/
+├── api/            # Endpoints y controladores
+├── core/           # Configuracion, seguridad
+├── domain/         # Entidades y reglas de negocio
+├── infrastructure/ # DB, APIs externas
+├── services/       # Casos de uso
+└── [otra carpeta]/ # [descripcion]
+```
+
+## Convenciones
+- Archivos: [snake_case.py | kebab-case.ts | PascalCase.tsx]
+- Tests: `test_[modulo].py` en `tests/`
+- [Docstrings Google | JSDoc] para funciones publicas
+- Imports ordenados: [stdlib -> terceros -> locales | automatico con Ruff]
+- [Usar pathlib.Path en lugar de os.path | Usar import type en TypeScript]
+
+## Testing
+- [Pytest | Vitest | Jest] con [pytest-cov | --coverage]
+- [Fixtures en conftest.py | beforeEach/afterEach]
+- [Mock de servicios externos | MSW para mocking HTTP]
+- [Testcontainers para DB en tests de integracion | SQLite en memoria]
+
+## No Hacer
+- [NO usar Any | NO usar any]
+- [NO usar print() | NO usar console.log]
+- [NO dependencias circulares]
+- [NO modificar configuracion sin consultar]
+- [NO eliminar tests existentes]
+- [NO hardcodear URLs, keys, o configuraciones]
+```
+
+---
+
+## Para proyectos grandes: usar .cursor/rules/ (por dominio)
+
+Crear la carpeta `.cursor/rules/` con archivos separados:
+
+```
+.cursor/rules/
+├── global.md       # Reglas generales
+├── python.md       # Solo para .py
+├── typescript.md   # Solo para .ts/.tsx
+├── testing.md      # Reglas de testing
+└── database.md     # Reglas de acceso a datos
+```

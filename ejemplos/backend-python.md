@@ -2,7 +2,7 @@
 
 ¡Bienvenido/a a la plantilla de ejemplo para un backend Python moderno! Este repositorio sirve como un punto de partida práctico y bien estructurado para tus propios proyectos de API.
 
-Está construido usando **FastAPI**, aprovechando sus características modernas como la **asincronía**, la **inyección de dependencias**, y la validación de datos con **Pydantic**. También integra **SQLAlchemy** (para la base de datos, con soporte async) y **Alembic** (para migraciones), siguiendo las mejores prácticas recomendadas en `repo-universal-structure`.
+Esta construido usando **FastAPI**, aprovechando sus caracteristicas modernas como la **asincronia**, la **inyeccion de dependencias**, y la validacion de datos con **Pydantic**. Tambien integra **SQLAlchemy** (para la base de datos, con soporte async) y **Alembic** (para migraciones), siguiendo las mejores practicas recomendadas en `Como_Estructurar_Tus_Proyectos`.
 
 ## Objetivo 🎯
 
@@ -94,7 +94,7 @@ La estructura sigue el layout `src/` y organiza el código por funcionalidad y c
 
 ## Contribuciones a este Ejemplo ✨
 
-Si tienes sugerencias para mejorar *esta plantilla de ejemplo específica*, por favor sigue la guía de contribución general del repositorio `repo-universal-structure` (ubicada en `comunidad/como-contribuir.md`) indicando que tu sugerencia es para `ejemplos/backend-python`.
+Si tienes sugerencias para mejorar *esta plantilla de ejemplo especifica*, por favor sigue la guia de contribucion general (`plantillas/CONTRIBUTING.md`) indicando que tu sugerencia es para `ejemplos/backend-python`.
 
 ¡Esperamos que esta plantilla te sea de gran utilidad para empezar tu próximo proyecto backend en Python!
 ``` bash

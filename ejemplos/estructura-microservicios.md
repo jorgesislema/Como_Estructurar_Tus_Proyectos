@@ -8,7 +8,7 @@ Piénsalo como organizar una gran empresa: ¿pones todos los departamentos en un
 
 ## El Gran Dilema: Monorepo vs. Multi-repo para Microservicios 🏦 vs 🏘️
 
-Esta decisión es el punto de partida fundamental. Ya lo discutimos en [Patrones de Repositorios en la Industria](../../casos-estudio/patrones-repo-industria.md), pero veamos los matices específicos para microservicios:
+Esta decisión es el punto de partida fundamental. Ya lo discutimos en [Patrones de Repositorios en la Industria](casos-estudio/analisis-comparativo-monorepos.md), pero veamos los matices específicos para microservicios:
 
 ### Monorepo: El Edificio Centralizado
 

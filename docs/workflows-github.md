@@ -43,7 +43,7 @@ jobs:
 
     strategy:
       matrix: # Ejecutar para múltiples versiones de Python (opcional)
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout code # 1. Descarga el código del repositorio
@@ -59,10 +59,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8 pytest pytest-cov # Instala herramientas de dev
+          pip install ruff pytest pytest-cov
 
       - name: Lint with Flake8 # 4. Ejecuta el linter
-        run: flake8 . --count --show-source --statistics
+        run: ruff check . --show-source
 
       - name: Test with Pytest # 5. Ejecuta las pruebas y genera reporte de cobertura
         run: pytest --cov=src --cov-report=xml # Asume que el código está en src/
@@ -125,10 +125,37 @@ tags\: ghcr\.io/</span>{{ github.repository }}:latest # Etiqueta la imagen (ej. 
           cache-to: type=gha,mode=max
 
 ```
-   ### 3. ¡Fantástico! Automatizar es el superpoder secreto (¡o no tan secreto!) de los equipos de desarrollo eficientes. GitHub Actions nos permite integrar esa magia directamente en nuestros repositorios. Preparando el contenido para docs/automatizacion/workflows-github.md, con el rigor y el toque justo de chispa que acordamos. ¡Allá vamos!
-Markdown
+   ### 3. Workflow de Docker: Construir y Publicar Imagenes
 
-# Workflows de GitHub Actions: ¡Tus Robots Asistentes Personales en el Repositorio! 🤖
+```yaml
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
+# Workflows de GitHub Actions: Automatizacion Profesional de Repositorios
 
 ¿Te imaginas tener un ejército de pequeños y diligentes robots viviendo dentro de tu repositorio de GitHub, listos para entrar en acción cada vez que haces un `push`, abres un `pull request` o simplemente cuando el reloj marca la medianoche? Pues deja de imaginar, ¡porque eso es básicamente **GitHub Actions**! 🚀
 
@@ -173,7 +200,7 @@ jobs:
 
     strategy:
       matrix: # Ejecutar para múltiples versiones de Python (opcional)
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
       - name: Checkout code # 1. Descarga el código del repositorio
@@ -189,10 +216,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8 pytest pytest-cov # Instala herramientas de dev
+          pip install ruff pytest pytest-cov
 
       - name: Lint with Flake8 # 4. Ejecuta el linter
-        run: flake8 . --count --show-source --statistics
+        run: ruff check . --show-source
 
       - name: Test with Pytest # 5. Ejecuta las pruebas y genera reporte de cobertura
         run: pytest --cov=src --cov-report=xml # Asume que el código está en src/
